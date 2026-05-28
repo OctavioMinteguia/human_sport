@@ -378,37 +378,6 @@ function initStickyHeader() {
   }, { passive: true });
 }
 
-function initHeroScrollEffect() {
-  const hero = document.getElementById('inicio');
-  const hint = document.querySelector('.scroll-hint');
-  if (!hero) return;
-  let raf = null;
-
-  function tick() {
-    const sy = window.scrollY;
-    const heroH = hero.offsetHeight;
-    const progress = Math.min(sy / heroH, 1);
-
-    const img     = document.querySelector('.slide.active .slide-img');
-    const overlay = document.querySelector('.slide.active .slide-overlay');
-
-    if (img) {
-      img.style.transition = 'none';
-      img.style.transform  = `scale(${1.04 + progress * 0.2}) translateY(${sy * 0.12}px)`;
-    }
-    if (overlay) {
-      overlay.style.opacity   = Math.max(0, 1 - progress * 2.8);
-      overlay.style.transform = `translateY(${-progress * 80}px)`;
-    }
-    if (hint) hint.style.opacity = Math.max(0, 0.75 - progress * 4);
-    raf = null;
-  }
-
-  window.addEventListener('scroll', () => {
-    if (!raf) raf = requestAnimationFrame(tick);
-  }, { passive: true });
-}
-
 function observeElements() {
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
@@ -440,7 +409,7 @@ function initSmoothScroll() {
 document.addEventListener('DOMContentLoaded', async () => {
   renderCart(); syncBadge();
   initSlider(); initFilters(); initCategoryCards();
-  initMobileMenu(); initStickyHeader(); initHeroScrollEffect();
+  initMobileMenu(); initStickyHeader();
   observeElements(); initNewsletter(); initSmoothScroll();
 
   await loadProducts();
