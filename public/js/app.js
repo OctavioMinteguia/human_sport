@@ -1,4 +1,4 @@
-/* ================================================
+﻿/* ================================================
    Human Sport — Frontend App
    Consume la API REST del servidor Express.
    ================================================ */
@@ -153,7 +153,7 @@ async function checkoutWhatsApp() {
   });
   msg += `\n💰 *TOTAL: ${fmt(cartTotal())}*\n\n¿Me podés confirmar disponibilidad? ¡Muchas gracias! 😊`;
 
-  window.open('https://wa.me/5492345404999?text=' + encodeURIComponent(msg), '_blank');
+  window.open('https://wa.me/5492346581240?text=' + encodeURIComponent(msg), '_blank');
 }
 
 // ================================================

@@ -1,4 +1,4 @@
-/* ================================================
+﻿/* ================================================
    HUMAN SPORT — App JS
    Catálogo · Carrito · WhatsApp Checkout
    ================================================ */
@@ -358,7 +358,7 @@ function checkoutWhatsApp() {
   msg += '¿Me podés confirmar disponibilidad? ¡Muchas gracias! 😊';
 
   window.open(
-    'https://wa.me/5492345404999?text=' + encodeURIComponent(msg),
+    'https://wa.me/5492346581240?text=' + encodeURIComponent(msg),
     '_blank'
   );
 }

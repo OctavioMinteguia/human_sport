@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+﻿const bcrypt = require('bcryptjs');
 
 const PRODUCTS = [
   {
@@ -120,7 +120,7 @@ exports.seed = async function (knex) {
 
   // Settings iniciales
   await knex('settings').insert([
-    { key: 'whatsapp_number', value: '5492345404999' },
+    { key: 'whatsapp_number', value: '5492346581240' },
     { key: 'instagram_handle', value: 'humansportchivilcoy' },
     { key: 'store_name', value: 'Human Sport' },
     { key: 'low_stock_threshold', value: '3' }
