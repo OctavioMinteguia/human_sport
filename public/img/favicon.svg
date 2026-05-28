@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
+  <!-- Cara izquierda oscura -->
+  <polygon points="12,108 50,8 32,58" fill="#111111"/>
+  <!-- Cara derecha marrón -->
+  <polygon points="50,8 88,108 66,55" fill="#5c2a08"/>
+  <!-- Cara central -->
+  <polygon points="32,58 50,8 66,55 48,78" fill="#2e1408"/>
+</svg>

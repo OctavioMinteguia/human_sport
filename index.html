@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Human Sport — Ropa deportiva premium. Distribuidores Lady Fit. Envíos a todo el país. Chivilcoy, Buenos Aires.">
+    <meta name="keywords" content="ropa deportiva, Lady Fit, calzas, tops, buzos, conjuntos deportivos, Chivilcoy">
+    <meta property="og:title" content="Human Sport | Ropa Deportiva Premium">
+    <meta property="og:description" content="Encontrá la mejor ropa deportiva. Lady Fit y más marcas. Envíos a todo el país.">
+    <meta property="og:image" content="img/IMG_2888.JPG.jpeg">
+    <meta property="og:type" content="website">
+    <title>Human Sport | Ropa Deportiva Premium</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ANNOUNCEMENT BAR -->
+    <div class="announcement-bar">
+        <div class="announcement-track">
+            <span>🔥 NUEVO STOCK — COLECCIÓN LADY FIT 2025</span>
+            <span>✨ ENVÍOS A TODO EL PAÍS</span>
+            <span>💬 CONSULTÁ POR WHATSAPP ANTES DE COMPRAR</span>
+            <span>🎽 TALLES XS AL XL DISPONIBLES</span>
+            <span>🔥 NUEVO STOCK — COLECCIÓN LADY FIT 2025</span>
+            <span>✨ ENVÍOS A TODO EL PAÍS</span>
+            <span>💬 CONSULTÁ POR WHATSAPP ANTES DE COMPRAR</span>
+            <span>🎽 TALLES XS AL XL DISPONIBLES</span>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header" id="header">
+        <div class="container header-inner">
+            <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+                <span></span><span></span><span></span>
+            </button>
+
+            <a href="#inicio" class="logo">
+                <img src="img/logo.png" alt="Human Sport" class="logo-img">
+            </a>
+
+            <nav class="nav" id="nav">
+                <button class="nav-close" id="navClose" aria-label="Cerrar menú">✕</button>
+                <ul class="nav-list">
+                    <li><a href="#inicio" class="nav-link">Inicio</a></li>
+                    <li><a href="#catalogo" class="nav-link">Catálogo</a></li>
+                    <li><a href="#categorias" class="nav-link">Categorías</a></li>
+                    <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
+                    <li><a href="#contacto" class="nav-link">Contacto</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <a href="https://wa.me/5492345404999" class="btn-wa-header" target="_blank" rel="noopener" aria-label="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </a>
+                <button class="cart-btn" id="cartBtn" aria-label="Carrito de compras">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count" id="cartCount" style="display:none">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <!-- HERO SLIDER -->
+    <section class="hero-slider" id="inicio">
+        <div class="slider-viewport">
+            <div class="slider-container" id="sliderContainer">
+
+                <div class="slide">
+                    <img src="img/2-slide-1774462795305-5587509415-a54a2b8aa58b5ab1b6a6635c8463f3db1774462659-1920-1920.jpg"
+                         alt="FW'26 Born to Shine — Lady Fit" class="slide-img">
+                    <div class="slide-overlay">
+                        <span class="slide-tag">NUEVA COLECCIÓN FW'26</span>
+                        <h2 class="slide-title">BORN TO<br><em>SHINE</em></h2>
+                        <a href="#catalogo" class="btn btn-primary">Ver Colección</a>
+                    </div>
+                </div>
+
+                <div class="slide">
+                    <img src="img/2-slide-1774462795306-1046088146-12e297994e71bdbf1adac8cc53c5804e1774462661-1920-1920.jpg"
+                         alt="Built to Feel — Lady Fit" class="slide-img" style="object-position: center 15%">
+                    <div class="slide-overlay">
+                        <span class="slide-tag">REMERAS & PANTALONES</span>
+                        <h2 class="slide-title">BUILT TO<br><em>FEEL</em></h2>
+                        <a href="#catalogo" class="btn btn-primary">Ver Remeras</a>
+                    </div>
+                </div>
+
+                <div class="slide">
+                    <img src="img/2-slide-1774462795306-8807903285-e83c2d0da3a451febcebd7aed6cfeea11774462662-1920-1920.jpg"
+                         alt="FW'26 — Lady Fit" class="slide-img" style="object-position: center 10%">
+                    <div class="slide-overlay">
+                        <span class="slide-tag">TOPS & MUSCULOSAS</span>
+                        <h2 class="slide-title">LADY FIT<br><em>FW'26</em></h2>
+                        <a href="#catalogo" class="btn btn-primary">Descubrí</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <button class="slider-arrow slider-prev" id="sliderPrev" aria-label="Slide anterior">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="slider-arrow slider-next" id="sliderNext" aria-label="Slide siguiente">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div class="slider-dots" id="sliderDots">
+            <button class="dot active" data-idx="0" aria-label="Slide 1"></button>
+            <button class="dot" data-idx="1" aria-label="Slide 2"></button>
+            <button class="dot" data-idx="2" aria-label="Slide 3"></button>
+        </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <section class="benefits" id="beneficios">
+        <div class="container">
+            <div class="benefits-grid">
+                <div class="benefit-item fade-in">
+                    <div class="benefit-icon"><i class="fas fa-truck"></i></div>
+                    <div>
+                        <strong>Envíos a todo el país</strong>
+                        <span>Rápido y seguro</span>
+                    </div>
+                </div>
+                <div class="benefit-item fade-in">
+                    <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div>
+                        <strong>Compra garantizada</strong>
+                        <span>100% segura</span>
+                    </div>
+                </div>
+                <div class="benefit-item fade-in">
+                    <div class="benefit-icon"><i class="fas fa-undo"></i></div>
+                    <div>
+                        <strong>Cambios sin drama</strong>
+                        <span>Si no es tu talle</span>
+                    </div>
+                </div>
+                <div class="benefit-item fade-in">
+                    <div class="benefit-icon"><i class="fab fa-whatsapp"></i></div>
+                    <div>
+                        <strong>Atención personalizada</strong>
+                        <span>Respondemos rápido</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="categories" id="categorias">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">ENCONTRÁ TU <span class="accent">ESTILO</span></h2>
+                <p class="section-sub">Pensado para cada momento de tu entrenamiento</p>
+            </div>
+            <div class="categories-grid">
+                <a href="#catalogo" class="cat-card fade-in" data-filter="calzas">
+                    <div class="cat-bg" style="background: linear-gradient(135deg, #0d1b3e, #1a2d5a)"></div>
+                    <div class="cat-content">
+                        <span class="cat-icon">🩲</span>
+                        <h3>Calzas</h3>
+                        <span class="cat-link">Ver colección →</span>
+                    </div>
+                </a>
+                <a href="#catalogo" class="cat-card fade-in" data-filter="tops">
+                    <div class="cat-bg" style="background: linear-gradient(135deg, #3a0d0d, #6a1a1a)"></div>
+                    <div class="cat-content">
+                        <span class="cat-icon">👕</span>
+                        <h3>Tops & Musculosas</h3>
+                        <span class="cat-link">Ver colección →</span>
+                    </div>
+                </a>
+                <a href="#catalogo" class="cat-card fade-in" data-filter="buzos">
+                    <div class="cat-bg" style="background: linear-gradient(135deg, #0d2d0d, #1a4a1a)"></div>
+                    <div class="cat-content">
+                        <span class="cat-icon">🧥</span>
+                        <h3>Buzos & Camperas</h3>
+                        <span class="cat-link">Ver colección →</span>
+                    </div>
+                </a>
+                <a href="#catalogo" class="cat-card fade-in" data-filter="conjuntos">
+                    <div class="cat-bg" style="background: linear-gradient(135deg, #2d0d3a, #4a1a6a)"></div>
+                    <div class="cat-content">
+                        <span class="cat-icon">✨</span>
+                        <h3>Conjuntos</h3>
+                        <span class="cat-link">Ver colección →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATALOG -->
+    <section class="catalog" id="catalogo">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">NUESTRO <span class="accent">CATÁLOGO</span></h2>
+                <p class="section-sub">Prendas seleccionadas para tu mejor versión</p>
+            </div>
+            <div class="filter-bar fade-in">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="calzas">Calzas</button>
+                <button class="filter-btn" data-filter="tops">Tops</button>
+                <button class="filter-btn" data-filter="buzos">Buzos</button>
+                <button class="filter-btn" data-filter="conjuntos">Conjuntos</button>
+                <button class="filter-btn" data-filter="shorts">Shorts</button>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
+
+    <!-- SIZE MODAL -->
+    <div class="modal-overlay" id="sizeModal">
+        <div class="modal">
+            <button class="modal-close" id="modalClose" aria-label="Cerrar">✕</button>
+            <div class="modal-prod-info" id="modalProdInfo"></div>
+            <div class="modal-body">
+                <p class="modal-label">Seleccioná tu talle</p>
+                <div class="size-grid" id="sizeGrid"></div>
+                <button class="btn btn-primary btn-full" id="addToCartBtn">
+                    <i class="fas fa-shopping-bag"></i> Agregar al carrito
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section class="about" id="nosotros">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-visual fade-in">
+                    <div class="about-logo-wrap">
+                        <img src="img/IMG_2888.JPG.jpeg" alt="Human Sport" class="about-logo">
+                    </div>
+                </div>
+                <div class="about-content fade-in">
+                    <div class="label-tag">NUESTRA HISTORIA</div>
+                    <h2 class="section-title">MÁS QUE ROPA.<br><span class="accent">UN ESTILO DE VIDA.</span></h2>
+                    <p class="about-text">
+                        Human Sport nació de la pasión por el deporte y la moda. En Chivilcoy, Buenos Aires, creamos un espacio donde la calidad se encuentra con el estilo, para que cada entrenamiento sea una experiencia única.
+                    </p>
+                    <p class="about-text">
+                        Somos distribuidores de <strong>Lady Fit</strong>, una de las marcas más reconocidas en indumentaria deportiva femenina. Continuamente expandimos nuestro catálogo para traerte las mejores opciones del mercado.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <span class="stat-val">Lady Fit</span>
+                            <span class="stat-lbl">Marca oficial</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-val">+50</span>
+                            <span class="stat-lbl">Modelos disponibles</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-val">100%</span>
+                            <span class="stat-lbl">Satisfacción garantizada</span>
+                        </div>
+                    </div>
+                    <a href="https://wa.me/5492345404999?text=Hola!%20Quiero%20conocer%20m%C3%A1s%20sobre%20Human%20Sport." class="btn btn-primary" target="_blank" rel="noopener">
+                        <i class="fab fa-whatsapp"></i> Hablá con nosotros
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INSTAGRAM -->
+    <section class="ig-section">
+        <div class="container">
+            <div class="ig-header fade-in">
+                <div class="ig-icon"><i class="fab fa-instagram"></i></div>
+                <div class="ig-text">
+                    <h2>SEGUINOS EN INSTAGRAM</h2>
+                    <p>@humansportchivilcoy — Novedades, outfits y más</p>
+                </div>
+                <a href="https://www.instagram.com/humansportchivilcoy?igsh=MjlyMGFhMHZkbnp1" class="btn btn-outline" target="_blank" rel="noopener">
+                    Seguir <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+            <div class="ig-grid fade-in">
+                <a href="https://www.instagram.com/humansportchivilcoy" target="_blank" class="ig-post" style="background:linear-gradient(135deg,#1a1a2e,#e8b4c1)">
+                    <div class="ig-hover"><i class="fab fa-instagram"></i></div>
+                </a>
+                <a href="https://www.instagram.com/humansportchivilcoy" target="_blank" class="ig-post" style="background:linear-gradient(135deg,#3a1010,#c85a3a)">
+                    <div class="ig-hover"><i class="fab fa-instagram"></i></div>
+                </a>
+                <a href="https://www.instagram.com/humansportchivilcoy" target="_blank" class="ig-post" style="background:linear-gradient(135deg,#0d2d0d,#4a8a4a)">
+                    <div class="ig-hover"><i class="fab fa-instagram"></i></div>
+                </a>
+                <a href="https://www.instagram.com/humansportchivilcoy" target="_blank" class="ig-post" style="background:linear-gradient(135deg,#1a1a1a,#444)">
+                    <div class="ig-hover"><i class="fab fa-instagram"></i></div>
+                </a>
+                <a href="https://www.instagram.com/humansportchivilcoy" target="_blank" class="ig-post" style="background:linear-gradient(135deg,#2d0d2d,#9a4a9a)">
+                    <div class="ig-hover"><i class="fab fa-instagram"></i></div>
+                </a>
+                <a href="https://www.instagram.com/humansportchivilcoy" target="_blank" class="ig-post" style="background:linear-gradient(135deg,#0d1a2d,#2a6a9a)">
+                    <div class="ig-hover"><i class="fab fa-instagram"></i></div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-inner fade-in">
+                <span class="newsletter-fire">🔥</span>
+                <h2>NOVEDADES ANTES QUE NADIE</h2>
+                <p>Suscribite y recibí lanzamientos, ofertas exclusivas y tips de entrenamiento.</p>
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" placeholder="Tu email aquí..." required class="nl-input" aria-label="Email">
+                    <button type="submit" class="btn btn-dark">Suscribirme</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="contacto">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo-wrap"><img src="img/logo.png" alt="Human Sport" class="footer-logo"></div>
+                    <p>Ropa deportiva premium para mujeres que se mueven. Chivilcoy, Buenos Aires.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/humansportchivilcoy?igsh=MjlyMGFhMHZkbnp1" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/5492345404999" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>CATÁLOGO</h4>
+                    <ul>
+                        <li><a href="#catalogo">Calzas</a></li>
+                        <li><a href="#catalogo">Tops & Musculosas</a></li>
+                        <li><a href="#catalogo">Buzos & Camperas</a></li>
+                        <li><a href="#catalogo">Conjuntos</a></li>
+                        <li><a href="#catalogo">Shorts</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>INFORMACIÓN</h4>
+                    <ul>
+                        <li><a href="#nosotros">Sobre nosotros</a></li>
+                        <li><a href="#" onclick="return false">Política de cambios</a></li>
+                        <li><a href="#" onclick="return false">Guía de talles</a></li>
+                        <li><a href="#" onclick="return false">Preguntas frecuentes</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>CONTACTO</h4>
+                    <div class="contact-row">
+                        <i class="fab fa-whatsapp"></i>
+                        <a href="https://wa.me/5492345404999" target="_blank">+54 9 2345 404999</a>
+                    </div>
+                    <div class="contact-row">
+                        <i class="fab fa-instagram"></i>
+                        <a href="https://www.instagram.com/humansportchivilcoy" target="_blank">@humansportchivilcoy</a>
+                    </div>
+                    <div class="contact-row">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Chivilcoy, Buenos Aires</span>
+                    </div>
+                    <a href="https://wa.me/5492345404999?text=Hola!%20Me%20comunico%20desde%20la%20web%20de%20Human%20Sport." class="btn-wa-footer" target="_blank" rel="noopener">
+                        <i class="fab fa-whatsapp"></i> Escribinos
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 Human Sport. Todos los derechos reservados.</p>
+                <p>Chivilcoy, Buenos Aires, Argentina</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar" aria-label="Carrito de compras">
+        <div class="cart-head">
+            <h3><i class="fas fa-shopping-bag"></i> Mi Carrito</h3>
+            <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-foot" id="cartFoot"></div>
+    </aside>
+
+    <!-- FLOATING WHATSAPP -->
+    <a href="https://wa.me/5492345404999?text=Hola!%20Estoy%20viendo%20su%20web%20y%20me%20gustar%C3%ADa%20consultar." class="float-wa" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span class="float-tooltip">¡Hablá con nosotros!</span>
+    </a>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

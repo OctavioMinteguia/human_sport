@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem \"C:\\\\Freelance\\\\HumanSport\" -Recurse)",
+      "Bash(Select-Object FullName, Length)",
+      "WebSearch",
+      "WebFetch(domain:www.sporting.com.ar)",
+      "WebFetch(domain:www.vaypol.com.ar)",
+      "WebFetch(domain:www.abyss.com.ar)",
+      "WebFetch(domain:www.solodeportes.com.ar)",
+      "WebFetch(domain:sportwear.com.ar)",
+      "WebFetch(domain:www.decathlon.com.ar)",
+      "WebFetch(domain:aureatelabs.com)",
+      "WebFetch(domain:www.kappastore.com.ar)",
+      "WebFetch(domain:tiendli.com)",
+      "WebFetch(domain:konigle.com)",
+      "PowerShell(New-Item *)",
+      "PowerShell(Get-ChildItem \"C:\\\\Freelance\\\\HumanSport\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object FullName, @{N='KB';E={[math]::Round\\($_.Length/1KB,1\\)}})",
+      "PowerShell(Get-ChildItem \"C:\\\\Freelance\\\\HumanSport\\\\img\" | Select-Object Name, @{N='KB';E={[math]::Round\\($_.Length/1KB,1\\)}}, Extension)",
+      "WebFetch(domain:ladyfitshop.com.ar)",
+      "WebFetch(domain:acdn-us.mitiendanube.com)",
+      "Bash(python3 *)",
+      "Bash(python *)",
+      "Bash(npm --version)",
+      "PowerShell(Start-Sleep -Seconds 3; Invoke-RestMethod -Uri \"http://localhost:3000/api/products\" -Method Get | ConvertTo-Json -Depth 2 | Select-Object -First 20)",
+      "PowerShell(Start-Process -FilePath \"node\" -ArgumentList \"server/server.js\" -WorkingDirectory \"C:\\\\Freelance\\\\HumanSport\" -WindowStyle Hidden -PassThru | Select-Object Id)",
+      "PowerShell(Start-Sleep -Seconds 3; try { $r = Invoke-RestMethod -Uri \"http://localhost:3000/api/products\" -Method Get; \"Success: $\\($r.data.Count\\) products\" } catch { \"Error: $_\" })",
+      "PowerShell(try { $r = Invoke-RestMethod -Uri \"http://localhost:3000/api/products\" -Method Get; \"OK: $\\($r.data.Count\\) products. First: $\\($r.data[0].name\\)\" } catch { \"Error: $\\($_.Exception.Message\\)\" })",
+      "PowerShell($resp = Invoke-WebRequest -Uri \"http://localhost:3000/\" -UseBasicParsing; \"Status: $\\($resp.StatusCode\\), ContentType: $\\($resp.Headers['Content-Type']\\)\"; try { $r2 = Invoke-WebRequest -Uri \"http://localhost:3000/api/products\" -UseBasicParsing; \"API Status: $\\($r2.StatusCode\\)\" } catch { $err = $_.Exception.Response; if \\($err\\) { $stream = $err.GetResponseStream\\(\\); $reader = New-Object System.IO.StreamReader\\($stream\\); \"API Error Body: $\\($reader.ReadToEnd\\(\\)\\)\" } })",
+      "PowerShell(Stop-Process *)",
+      "PowerShell($env:PORT = \"3001\"; Start-Process -FilePath \"node\" -ArgumentList \"server/server.js\" -WorkingDirectory \"C:\\\\Freelance\\\\HumanSport\" -WindowStyle Hidden -PassThru | Select-Object Id)",
+      "PowerShell(Start-Sleep -Seconds 3; try { $r = Invoke-RestMethod -Uri \"http://localhost:3001/api/products\" -Method Get; \"OK: $\\($r.data.Count\\) products | First: $\\($r.data[0].name\\) - $\\($r.data[0].brand\\)\" } catch { \"Error: $\\($_.Exception.Message\\)\" })",
+      "PowerShell($body = '{\"email\":\"admin@humansport.com\",\"password\":\"humansport2025\"}'; try { $r = Invoke-RestMethod -Uri \"http://localhost:3001/api/admin/auth/login\" -Method Post -Body $body -ContentType \"application/json\"; \"Login OK: token=$\\($r.data.token.Substring\\(0,20\\)\\)... user=$\\($r.data.user.email\\)\" } catch { \"Error: $\\($_.Exception.Message\\)\" })",
+      "Read(//mnt/c/Freelance/**)",
+      "PowerShell(Copy-Item *)",
+      "PowerShell(Get-Command *)"
+    ]
+  }
+}

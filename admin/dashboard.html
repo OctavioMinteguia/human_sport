@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Human Sport — Dashboard</title>
+  <link rel="icon" type="image/jpeg" href="/img/IMG_2888.JPG.jpeg">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body class="dashboard-page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="/img/IMG_2888.JPG.jpeg" alt="Human Sport">
+      <div class="sidebar-logo-text">
+        <span class="brand-name">Human Sport</span>
+        <span class="brand-sub">Panel Admin</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-section="overview">
+        <i class="fas fa-chart-line"></i>
+        <span>Resumen</span>
+      </a>
+      <a href="#" class="nav-item" data-section="products">
+        <i class="fas fa-tshirt"></i>
+        <span>Productos</span>
+      </a>
+      <a href="#" class="nav-item" data-section="stock">
+        <i class="fas fa-boxes"></i>
+        <span>Stock</span>
+      </a>
+      <a href="#" class="nav-item" data-section="orders">
+        <i class="fas fa-receipt"></i>
+        <span>Pedidos</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-info" id="adminInfo">
+        <div class="admin-avatar"><i class="fas fa-user"></i></div>
+        <div class="admin-details">
+          <span class="admin-name" id="adminName">Admin</span>
+          <span class="admin-email" id="adminEmail"></span>
+        </div>
+      </div>
+      <button class="btn-logout" id="logoutBtn" title="Cerrar sesión">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <h1 class="topbar-title" id="topbarTitle">Resumen</h1>
+    <div class="topbar-actions">
+      <a href="/" target="_blank" class="btn-sm btn-outline">
+        <i class="fas fa-store"></i> Ver tienda
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- ===== OVERVIEW ===== -->
+    <section id="section-overview" class="section active">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(212,129,42,.15);color:#d4812a">
+            <i class="fas fa-receipt"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Pedidos totales</span>
+            <span class="stat-value" id="statTotal">—</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(234,179,8,.15);color:#ca8a04">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Pedidos pendientes</span>
+            <span class="stat-value" id="statPending">—</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(34,197,94,.15);color:#16a34a">
+            <i class="fas fa-calendar-day"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Pedidos hoy</span>
+            <span class="stat-value" id="statToday">—</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(99,102,241,.15);color:#6366f1">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Ingresos totales</span>
+            <span class="stat-value" id="statRevenue">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:2rem">
+        <h2>Últimos pedidos</h2>
+        <button class="btn-sm btn-outline" onclick="switchSection('orders')">Ver todos</button>
+      </div>
+      <div class="table-wrap" id="recentOrdersWrap">
+        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+      </div>
+
+      <div class="section-header" style="margin-top:2rem">
+        <h2>Alertas de stock bajo</h2>
+        <button class="btn-sm btn-outline" onclick="switchSection('stock')">Ver stock</button>
+      </div>
+      <div id="lowStockAlerts" class="low-stock-wrap">
+        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+      </div>
+    </section>
+
+    <!-- ===== PRODUCTS ===== -->
+    <section id="section-products" class="section">
+      <div class="section-header">
+        <h2>Productos</h2>
+        <button class="btn-primary" id="btnNewProduct">
+          <i class="fas fa-plus"></i> Nuevo producto
+        </button>
+      </div>
+      <div class="table-wrap" id="productsTableWrap">
+        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+      </div>
+    </section>
+
+    <!-- ===== STOCK ===== -->
+    <section id="section-stock" class="section">
+      <div class="section-header">
+        <h2>Gestión de Stock</h2>
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="stockSearch" placeholder="Buscar producto..." oninput="filterStockTable(this.value)">
+        </div>
+      </div>
+      <div class="table-wrap" id="stockTableWrap">
+        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+      </div>
+    </section>
+
+    <!-- ===== ORDERS ===== -->
+    <section id="section-orders" class="section">
+      <div class="section-header">
+        <h2>Pedidos</h2>
+        <div class="filter-wrap">
+          <select id="orderStatusFilter" onchange="loadOrders()">
+            <option value="">Todos</option>
+            <option value="pending">Pendientes</option>
+            <option value="confirmed">Confirmados</option>
+            <option value="preparing">Preparando</option>
+            <option value="delivered">Entregados</option>
+            <option value="cancelled">Cancelados</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap" id="ordersTableWrap">
+        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== MODAL: PRODUCT FORM ===== -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3 id="productModalTitle">Nuevo Producto</h3>
+        <button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="productForm" autocomplete="off">
+          <input type="hidden" id="productId">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre *</label>
+              <input type="text" id="prodName" required placeholder="Ej: Calza Pro Run">
+            </div>
+            <div class="form-group">
+              <label>Marca *</label>
+              <input type="text" id="prodBrand" required placeholder="Ej: Lady Fit">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Categoría *</label>
+              <select id="prodCategory" required>
+                <option value="">Seleccionar...</option>
+                <option value="calzas">Calzas</option>
+                <option value="tops">Tops / Musculosas</option>
+                <option value="conjuntos">Conjuntos</option>
+                <option value="remeras">Remeras</option>
+                <option value="shorts">Shorts</option>
+                <option value="buzos">Buzos / Camperas</option>
+                <option value="accesorios">Accesorios</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Badge</label>
+              <select id="prodBadge">
+                <option value="">Sin badge</option>
+                <option value="NUEVO">NUEVO</option>
+                <option value="OFERTA">OFERTA</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Precio *</label>
+              <input type="number" id="prodPrice" required min="0" placeholder="15000">
+            </div>
+            <div class="form-group">
+              <label>Precio original (para descuento)</label>
+              <input type="number" id="prodOriginalPrice" min="0" placeholder="Dejar vacío si no tiene">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Emoji</label>
+              <input type="text" id="prodEmoji" placeholder="🏃‍♀️" maxlength="4">
+            </div>
+            <div class="form-group">
+              <label>Gradiente de fondo</label>
+              <input type="text" id="prodBg" placeholder="linear-gradient(135deg,#1a1a1a,#333)">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea id="prodDesc" rows="3" placeholder="Descripción opcional del producto"></textarea>
+          </div>
+
+          <!-- TALLES Y STOCK INICIAL -->
+          <div class="form-group">
+            <label>Talles y stock inicial</label>
+            <div class="variants-grid" id="variantsGrid">
+              <!-- Rendered by JS -->
+            </div>
+            <div class="variants-add">
+              <input type="text" id="newSizeInput" placeholder="Talle (ej: XS, S, M, L, XL, XXL, 36, 37...)">
+              <button type="button" class="btn-sm btn-outline" onclick="addVariantRow()">
+                <i class="fas fa-plus"></i> Agregar talle
+              </button>
+            </div>
+          </div>
+
+          <!-- COLORES -->
+          <div class="form-group">
+            <label>Colores</label>
+            <div id="colorsGrid" class="colors-editor">
+              <!-- Rendered by JS -->
+            </div>
+            <button type="button" class="btn-sm btn-outline" onclick="addColorRow()">
+              <i class="fas fa-plus"></i> Agregar color
+            </button>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeProductModal()">Cancelar</button>
+        <button class="btn-primary" id="saveProductBtn" onclick="saveProduct()">
+          <i class="fas fa-save"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: IMAGES ===== -->
+  <div class="modal-overlay" id="imagesModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="imagesModalTitle">Imágenes</h3>
+        <button class="modal-close" onclick="closeImagesModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="upload-zone" id="uploadZone">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Arrastrá una imagen o hacé clic para subir</p>
+          <span>JPG, PNG, WebP — máx. 5MB</span>
+          <input type="file" id="imageFileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+        </div>
+        <div id="productImagesList" class="images-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeImagesModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: ORDER DETAIL ===== -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="orderModalTitle">Detalle del pedido</h3>
+        <button class="modal-close" onclick="closeOrderModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" id="orderModalBody">
+        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeOrderModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <!-- OVERLAY for sidebar mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <script src="/admin/js/admin.js"></script>
+</body>
+</html>
