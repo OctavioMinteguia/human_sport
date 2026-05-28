@@ -664,7 +664,7 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 }
 .cart-close:hover { background: var(--orange); color: #fff; }
 
-.cart-items { flex: 1; overflow-y: auto; padding: 14px; }
+.cart-items { flex: 1; overflow-y: auto; padding: 14px; overscroll-behavior: contain; }
 
 .cart-empty { text-align: center; padding: 56px 20px; color: var(--muted); }
 .cart-empty i { font-size: 2.8rem; opacity: 0.25; display: block; margin-bottom: 14px; }
