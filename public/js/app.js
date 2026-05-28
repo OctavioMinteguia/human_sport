@@ -159,21 +159,30 @@ async function checkoutWhatsApp() {
 
   const waUrl = 'https://wa.me/5492346581240?text=' + encodeURIComponent(msg);
 
-  clearCart();
+  // Abrir WhatsApp inmediatamente
+  window.open(waUrl, '_blank');
 
-  const itemsEl = document.getElementById('cartItems');
-  const footEl  = document.getElementById('cartFoot');
-  if (itemsEl) itemsEl.innerHTML = `
-    <div class="cart-success">
-      <div class="cart-success-emoji">🎉</div>
-      <h3>¡Pedido listo!</h3>
-      <p>Tocá el botón para abrir WhatsApp y confirmar tu compra con nosotros.</p>
-    </div>`;
-  if (footEl) footEl.innerHTML = `
-    <a href="${waUrl}" class="btn-checkout">
-      <i class="fab fa-whatsapp"></i> Abrir WhatsApp
-    </a>
-    <button class="btn-clear" onclick="closeCart()">Seguir comprando</button>`;
+  // Cuando el usuario vuelve a esta pestaña, mostrar confirmación y vaciar carrito
+  function onReturn() {
+    if (document.visibilityState !== 'visible') return;
+    document.removeEventListener('visibilitychange', onReturn);
+    clearCart();
+    const itemsEl = document.getElementById('cartItems');
+    const footEl  = document.getElementById('cartFoot');
+    if (itemsEl) itemsEl.innerHTML = `
+      <div class="cart-success">
+        <div class="cart-success-emoji">🎉</div>
+        <h3>¡Pedido enviado!</h3>
+        <p>¡Gracias! En breve te confirmamos la disponibilidad por WhatsApp.</p>
+      </div>`;
+    if (footEl) footEl.innerHTML = `
+      <button class="btn-clear" onclick="closeCart()">Seguir comprando</button>`;
+  }
+
+  // Delay para no capturar el cambio de visibilidad al abrir la nueva pestaña
+  setTimeout(() => {
+    document.addEventListener('visibilitychange', onReturn);
+  }, 800);
 }
 
 // ================================================
