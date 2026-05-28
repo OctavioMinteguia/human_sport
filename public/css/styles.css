@@ -671,6 +671,14 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 .cart-empty p    { font-size: 0.88rem; margin-bottom: 6px; }
 .cart-empty span { font-size: 0.75rem; }
 
+.cart-success {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 60px 24px; text-align: center; gap: 14px;
+}
+.cart-success-emoji { font-size: 3.5rem; }
+.cart-success h3 { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 800; color: #fff; }
+.cart-success p  { color: var(--muted); font-size: 0.85rem; line-height: 1.65; }
+
 .cart-item {
     display: flex; gap: 11px; padding: 12px 0;
     border-bottom: 1px solid var(--border);

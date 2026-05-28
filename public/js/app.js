@@ -136,24 +136,45 @@ function renderCart() {
 async function checkoutWhatsApp() {
   if (cart.length === 0) return;
 
+  const snapshot = [...cart];
+  const total    = cartTotal();
+
+  let msg = '¡Hola! Me gustaría realizar el siguiente pedido en *Human Sport*:\n\n🛍️ *MIS PRODUCTOS:*\n';
+  snapshot.forEach((item, i) => {
+    msg += `${i + 1}. ${item.name} - Talle ${item.size} - ${fmt(item.price)}`;
+    if (item.qty > 1) msg += ` (x${item.qty})`;
+    msg += '\n';
+  });
+  msg += `\n💰 *TOTAL: ${fmt(total)}*\n\n¿Me podés confirmar disponibilidad? ¡Muchas gracias! 😊`;
+
   try {
     await API.createOrder({
-      items: cart.map(i => ({
+      items: snapshot.map(i => ({
         product_id: i.id, product_name: i.name, brand: i.brand,
         size: i.size, quantity: i.qty, unit_price: i.price
       }))
     });
   } catch (e) { console.warn('No se pudo registrar el pedido:', e.message); }
 
-  let msg = '¡Hola! Me gustaría realizar el siguiente pedido en *Human Sport*:\n\n🛍️ *MIS PRODUCTOS:*\n';
-  cart.forEach((item, i) => {
-    msg += `${i + 1}. ${item.name} - Talle ${item.size} - ${fmt(item.price)}`;
-    if (item.qty > 1) msg += ` (x${item.qty})`;
-    msg += '\n';
-  });
-  msg += `\n💰 *TOTAL: ${fmt(cartTotal())}*\n\n¿Me podés confirmar disponibilidad? ¡Muchas gracias! 😊`;
+  const waUrl = 'https://wa.me/5492346581240?text=' + encodeURIComponent(msg);
 
-  window.open('https://wa.me/5492346581240?text=' + encodeURIComponent(msg), '_blank');
+  clearCart();
+
+  const itemsEl = document.getElementById('cartItems');
+  const footEl  = document.getElementById('cartFoot');
+  if (itemsEl) itemsEl.innerHTML = `
+    <div class="cart-success">
+      <div class="cart-success-emoji">🎉</div>
+      <h3>¡Pedido enviado!</h3>
+      <p>Abrimos WhatsApp para que confirmes tu compra con nosotros.</p>
+    </div>`;
+  if (footEl) footEl.innerHTML = `
+    <a href="${waUrl}" target="_blank" rel="noopener" class="btn-checkout">
+      <i class="fab fa-whatsapp"></i> Abrir WhatsApp
+    </a>
+    <button class="btn-clear" onclick="closeCart()">Seguir comprando</button>`;
+
+  window.open(waUrl, '_blank');
 }
 
 // ================================================
