@@ -25,6 +25,8 @@ try { cart = JSON.parse(localStorage.getItem('hs_cart')) || []; } catch { cart =
 
 let pendingProduct = null;
 let pendingSize    = null;
+let pendingColor   = null;
+let pendingQty     = 1;
 
 function saveCart()  { localStorage.setItem('hs_cart', JSON.stringify(cart)); }
 function cartTotal() { return cart.reduce((s, i) => s + i.price * i.qty, 0); }
@@ -38,9 +40,11 @@ function syncBadge() {
   el.style.display = cnt > 0 ? 'flex' : 'none';
 }
 
-function addToCart(product, size) {
-  const existing = cart.find(i => i.id === product.id && i.size === size);
-  if (existing) { existing.qty += 1; }
+function addToCart(product, size, color, qty) {
+  qty = qty || 1;
+  color = color || '';
+  const existing = cart.find(i => i.id === product.id && i.size === size && (i.color || '') === color);
+  if (existing) { existing.qty += qty; }
   else {
     cart.push({
       id:    product.id,
@@ -51,23 +55,26 @@ function addToCart(product, size) {
       emoji: product.emoji,
       image: primaryImage(product),
       size,
-      qty: 1
+      color,
+      qty
     });
   }
   saveCart(); syncBadge(); renderCart();
-  showAddedToast(product, size);
+  showAddedToast(product, size, color, qty);
 }
 
-function removeFromCart(id, size) {
-  cart = cart.filter(i => !(i.id === id && i.size === size));
+function removeFromCart(id, size, color) {
+  color = color || '';
+  cart = cart.filter(i => !(i.id === id && i.size === size && (i.color || '') === color));
   saveCart(); syncBadge(); renderCart();
 }
 
-function changeQty(id, size, delta) {
-  const item = cart.find(i => i.id === id && i.size === size);
+function changeQty(id, size, color, delta) {
+  color = color || '';
+  const item = cart.find(i => i.id === id && i.size === size && (i.color || '') === color);
   if (!item) return;
   item.qty += delta;
-  if (item.qty <= 0) removeFromCart(id, size);
+  if (item.qty <= 0) removeFromCart(id, size, color);
   else { saveCart(); syncBadge(); renderCart(); }
 }
 
@@ -95,23 +102,25 @@ function renderCart() {
   }
 
   itemsEl.innerHTML = cart.map(item => {
+    const c = item.color || '';
     const thumb = item.image
       ? `<img src="${item.image}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover">`
       : `<span>${item.emoji}</span>`;
+    const sizeColor = `Talle: <strong>${item.size}</strong>${c ? ` · <strong>${c}</strong>` : ''}`;
     return `
     <div class="cart-item">
       <div class="ci-thumb" style="${item.image ? '' : 'background:' + item.bg}">${thumb}</div>
       <div class="ci-info">
         <div class="ci-brand">${item.brand}</div>
         <div class="ci-name">${item.name}</div>
-        <div class="ci-size">Talle: <strong>${item.size}</strong></div>
+        <div class="ci-size">${sizeColor}</div>
         <div class="ci-row">
           <span class="ci-price">${fmt(item.price * item.qty)}</span>
           <div class="ci-qty">
-            <button class="qty-btn" onclick="changeQty(${item.id},'${item.size}',-1)">−</button>
+            <button class="qty-btn" onclick="changeQty(${item.id},'${item.size}','${c}',-1)">−</button>
             <span class="qty-num">${item.qty}</span>
-            <button class="qty-btn" onclick="changeQty(${item.id},'${item.size}',1)">+</button>
-            <button class="ci-del" onclick="removeFromCart(${item.id},'${item.size}')" title="Eliminar">
+            <button class="qty-btn" onclick="changeQty(${item.id},'${item.size}','${c}',1)">+</button>
+            <button class="ci-del" onclick="removeFromCart(${item.id},'${item.size}','${c}')" title="Eliminar">
               <i class="fas fa-trash-alt"></i>
             </button>
           </div>
@@ -142,7 +151,9 @@ async function checkoutWhatsApp() {
 
   let msg = '¡Hola! Me gustaría realizar el siguiente pedido en *Human Sport*:\n\n🛍️ *MIS PRODUCTOS:*\n';
   snapshot.forEach((item, i) => {
-    msg += `${i + 1}. ${item.name} - Talle ${item.size} - ${fmt(item.price)}`;
+    msg += `${i + 1}. ${item.name} - Talle ${item.size}`;
+    if (item.color) msg += ` - Color ${item.color}`;
+    msg += ` - ${fmt(item.price)}`;
     if (item.qty > 1) msg += ` (x${item.qty})`;
     msg += '\n';
   });
@@ -205,7 +216,7 @@ function closeCart() {
 function openSizeModal(id) {
   const product = window.__products?.find(p => p.id === id);
   if (!product) return;
-  pendingProduct = product; pendingSize = null;
+  pendingProduct = product; pendingSize = null; pendingColor = null; pendingQty = 1;
 
   document.getElementById('modalProdInfo').innerHTML = `
     <div class="modal-thumb" style="background:${product.bg_gradient}">${product.emoji}</div>
@@ -223,6 +234,22 @@ function openSizeModal(id) {
       ${noStock ? 'disabled title="Sin stock"' : ''}>${s}</button>`;
   }).join('');
 
+  const colors = product.colors || [];
+  const colorsWrap = document.getElementById('modalColorsWrap');
+  const colorPicker = document.getElementById('colorPicker');
+  const colorName = document.getElementById('modalColorName');
+  if (colors.length > 0) {
+    colorPicker.innerHTML = colors.map(c =>
+      `<button class="color-swatch" data-color="${c.name}" title="${c.name}"
+        style="background:${c.hex}" onclick="selectColor('${c.name}')"></button>`
+    ).join('');
+    colorName.textContent = '';
+    colorsWrap.style.display = '';
+  } else {
+    colorsWrap.style.display = 'none';
+  }
+
+  document.getElementById('modalQtyNum').textContent = '1';
   document.getElementById('sizeModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -234,10 +261,23 @@ function selectSize(size) {
   });
 }
 
+function selectColor(name) {
+  pendingColor = name;
+  document.querySelectorAll('.color-swatch').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.color === name);
+  });
+  document.getElementById('modalColorName').textContent = name;
+}
+
+function changeModalQty(delta) {
+  pendingQty = Math.max(1, pendingQty + delta);
+  document.getElementById('modalQtyNum').textContent = pendingQty;
+}
+
 function closeSizeModal() {
   document.getElementById('sizeModal').classList.remove('open');
   document.body.style.overflow = '';
-  pendingProduct = null; pendingSize = null;
+  pendingProduct = null; pendingSize = null; pendingColor = null; pendingQty = 1;
 }
 
 function confirmAddToCart() {
@@ -247,7 +287,7 @@ function confirmAddToCart() {
     setTimeout(() => grid.classList.remove('shake'), 320);
     return;
   }
-  addToCart(pendingProduct, pendingSize);
+  addToCart(pendingProduct, pendingSize, pendingColor, pendingQty);
   closeSizeModal();
 }
 
@@ -400,7 +440,7 @@ function initMobileMenu() {
   nav?.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', close));
 }
 
-function showAddedToast(product, size) {
+function showAddedToast(product, size, color, qty) {
   const prev = document.getElementById('addToast');
   if (prev) { clearTimeout(prev._timer); prev.remove(); }
 
@@ -411,12 +451,14 @@ function showAddedToast(product, size) {
   const thumb = img
     ? `<img src="${img}" alt="" class="toast-thumb">`
     : `<div class="toast-thumb toast-thumb-emoji" style="background:${product.bg_gradient}">${product.emoji}</div>`;
+  const detail = [`Talle ${size}`, color || null, (qty > 1) ? `x${qty}` : null]
+    .filter(Boolean).join(' · ');
   toast.innerHTML = `
     <div class="toast-inner">
       ${thumb}
       <div class="toast-text">
         <strong>${product.name}</strong>
-        <span>Talle ${size} · agregado al carrito</span>
+        <span>${detail} · agregado al carrito</span>
       </div>
       <button class="toast-btn" onclick="openCart();this.closest('.add-toast').remove()">
         <i class="fas fa-shopping-bag"></i> Ver carrito

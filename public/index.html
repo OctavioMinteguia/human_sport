@@ -230,6 +230,18 @@
             <div class="modal-body">
                 <p class="modal-label">Seleccioná tu talle</p>
                 <div class="size-grid" id="sizeGrid"></div>
+                <div class="modal-colors-wrap" id="modalColorsWrap">
+                    <p class="modal-label">Color: <span class="modal-color-name" id="modalColorName"></span></p>
+                    <div class="color-picker" id="colorPicker"></div>
+                </div>
+                <div class="modal-qty-wrap">
+                    <p class="modal-label">Cantidad</p>
+                    <div class="modal-qty">
+                        <button class="modal-qty-btn" onclick="changeModalQty(-1)">−</button>
+                        <span class="modal-qty-num" id="modalQtyNum">1</span>
+                        <button class="modal-qty-btn" onclick="changeModalQty(1)">+</button>
+                    </div>
+                </div>
                 <button class="btn btn-primary btn-full" id="addToCartBtn">
                     <i class="fas fa-shopping-bag"></i> Agregar al carrito
                 </button>
