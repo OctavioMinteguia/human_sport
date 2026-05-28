@@ -54,7 +54,8 @@ function addToCart(product, size) {
       qty: 1
     });
   }
-  saveCart(); syncBadge(); renderCart(); openCart();
+  saveCart(); syncBadge(); renderCart();
+  showAddedToast(product, size);
 }
 
 function removeFromCart(id, size) {
@@ -165,16 +166,14 @@ async function checkoutWhatsApp() {
   if (itemsEl) itemsEl.innerHTML = `
     <div class="cart-success">
       <div class="cart-success-emoji">🎉</div>
-      <h3>¡Pedido enviado!</h3>
-      <p>Abrimos WhatsApp para que confirmes tu compra con nosotros.</p>
+      <h3>¡Pedido listo!</h3>
+      <p>Tocá el botón para abrir WhatsApp y confirmar tu compra con nosotros.</p>
     </div>`;
   if (footEl) footEl.innerHTML = `
-    <a href="${waUrl}" target="_blank" rel="noopener" class="btn-checkout">
+    <a href="${waUrl}" class="btn-checkout">
       <i class="fab fa-whatsapp"></i> Abrir WhatsApp
     </a>
     <button class="btn-clear" onclick="closeCart()">Seguir comprando</button>`;
-
-  window.open(waUrl, '_blank');
 }
 
 // ================================================
@@ -390,6 +389,36 @@ function initMobileMenu() {
   navClose?.addEventListener('click', close);
   overlay?.addEventListener('click', close);
   nav?.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', close));
+}
+
+function showAddedToast(product, size) {
+  const prev = document.getElementById('addToast');
+  if (prev) { clearTimeout(prev._timer); prev.remove(); }
+
+  const toast = document.createElement('div');
+  toast.id = 'addToast';
+  toast.className = 'add-toast';
+  const img = primaryImage(product);
+  const thumb = img
+    ? `<img src="${img}" alt="" class="toast-thumb">`
+    : `<div class="toast-thumb toast-thumb-emoji" style="background:${product.bg_gradient}">${product.emoji}</div>`;
+  toast.innerHTML = `
+    <div class="toast-inner">
+      ${thumb}
+      <div class="toast-text">
+        <strong>${product.name}</strong>
+        <span>Talle ${size} · agregado al carrito</span>
+      </div>
+      <button class="toast-btn" onclick="openCart();this.closest('.add-toast').remove()">
+        <i class="fas fa-shopping-bag"></i> Ver carrito
+      </button>
+    </div>`;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('visible'));
+  toast._timer = setTimeout(() => {
+    toast.classList.remove('visible');
+    setTimeout(() => toast.remove(), 350);
+  }, 3500);
 }
 
 function initStickyHeader() {

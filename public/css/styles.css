@@ -671,6 +671,38 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 .cart-empty p    { font-size: 0.88rem; margin-bottom: 6px; }
 .cart-empty span { font-size: 0.75rem; }
 
+/* ── Add to cart toast ───────────────────────────────────────── */
+.add-toast {
+    position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+    background: #1c1c1c; border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    border-radius: var(--r); z-index: 9999;
+    min-width: 300px; max-width: min(480px, 94vw);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    transition: bottom 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.add-toast.visible { bottom: 24px; }
+.toast-inner { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.toast-thumb {
+    width: 44px; height: 44px; border-radius: 8px;
+    object-fit: cover; flex-shrink: 0;
+}
+.toast-thumb-emoji {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+}
+.toast-text { flex: 1; min-width: 0; }
+.toast-text strong { display: block; font-size: 0.82rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.toast-text span   { font-size: 0.72rem; color: var(--muted); }
+.toast-btn {
+    background: var(--orange); color: #fff;
+    padding: 8px 13px; border-radius: var(--r);
+    font-size: 0.73rem; font-weight: 700;
+    white-space: nowrap; display: flex; align-items: center; gap: 6px;
+    transition: background var(--ease); cursor: pointer; flex-shrink: 0;
+}
+.toast-btn:hover { background: var(--orange-d); }
+
 .cart-success {
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; padding: 60px 24px; text-align: center; gap: 14px;
