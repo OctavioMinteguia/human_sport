@@ -18,7 +18,7 @@ module.exports = {
   production: {
     client: 'better-sqlite3',
     connection: {
-      filename: path.resolve(__dirname, 'database/humansport.db')
+      filename: path.resolve(__dirname, 'data/humansport.db')
     },
     migrations: {
       directory: path.resolve(__dirname, 'database/migrations')
