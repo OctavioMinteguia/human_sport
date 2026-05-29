@@ -923,7 +923,7 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
     .footer-links { text-align: center; }
     .footer-links ul { align-items: center; }
     .footer-contact { text-align: center; }
-    .footer-contact .footer-contact-item { justify-content: center; }
+    .footer-contact .contact-row { justify-content: center; }
     .footer-bottom { justify-content: center; text-align: center; }
 }
 
