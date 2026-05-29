@@ -233,8 +233,16 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     max-height: 92vh;
   }
 
-  /* Tabla: celdas más compactas */
-  .data-table th, .data-table td { padding: 10px 10px; font-size: 0.78rem; }
+  /* Tabla: permitir scroll horizontal si hace falta y celdas compactas */
+  .table-wrap { overflow-x: auto; border-radius: 12px; }
+  .data-table th, .data-table td { padding: 9px 8px; font-size: 0.78rem; }
+
+  /* Botones de acción más pequeños en móvil */
+  .btn-icon { width: 28px; height: 28px; font-size: 0.75rem; }
+  .actions-cell { gap: 4px; }
+
+  /* Thumbs de producto más chicos */
+  .prod-thumb, .prod-thumb-placeholder { width: 36px; height: 36px; font-size: 1rem; }
 
   /* Tabla productos: ocultar columnas menos importantes */
   #productsTableWrap .data-table th:nth-child(3),
@@ -302,7 +310,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .btn-logout:hover { border-color: var(--red); color: var(--red); }
 
 /* Sidebar toggle (mobile) */
-.sidebar-toggle { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border); border-radius: var(--r); color: var(--text); display: none; align-items: center; justify-content: center; font-size: 0.9rem; transition: var(--ease); }
+.sidebar-toggle { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border); border-radius: var(--r); color: var(--text); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: var(--ease); }
 .sidebar-toggle:hover { color: #fff; border-color: var(--orange); }
 
 /* Sidebar overlay (mobile) */
@@ -389,8 +397,18 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 /* Variants editor */
 .variants-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .variant-row  { display: flex; align-items: center; gap: 10px; }
-.variant-size { min-width: 50px; font-weight: 700; font-size: 0.88rem; color: #fff; }
-.variant-stock-input { width: 80px; padding: 7px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); color: #fff; font-size: 0.85rem; outline: none; text-align: center; transition: var(--ease); }
+.variant-size { min-width: 40px; font-weight: 700; font-size: 0.88rem; color: #fff; }
+.stock-stepper { display: flex; align-items: center; }
+.stepper-btn {
+  width: 34px; height: 36px; background: var(--border);
+  color: var(--white); font-size: 1.1rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--ease); flex-shrink: 0;
+}
+.stepper-btn:first-child { border-radius: var(--r) 0 0 var(--r); }
+.stepper-btn:last-child  { border-radius: 0 var(--r) var(--r) 0; }
+.stepper-btn:hover { background: var(--orange); }
+.variant-stock-input { width: 56px; padding: 7px 4px; background: var(--surface); border: 1px solid var(--border); border-left: none; border-right: none; border-radius: 0; color: #fff; font-size: 0.88rem; outline: none; text-align: center; transition: var(--ease); }
 .variant-stock-input:focus { border-color: var(--orange); }
 .variants-add { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
 .variants-add input { flex: 1; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); color: #fff; font-size: 0.85rem; outline: none; transition: var(--ease); }
@@ -440,4 +458,9 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
 /* Stat card body */
 .stat-body { display: flex; flex-direction: column; }
+
+/* Hide hamburger on desktop (must come after base style) */
+@media (min-width: 769px) {
+  .sidebar-toggle { display: none; }
+}
 

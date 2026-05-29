@@ -315,13 +315,22 @@ function renderVariantsGrid() {
   document.getElementById('variantsGrid').innerHTML = _variantRows.map((v, i) => `
     <div class="variant-row">
       <span class="variant-size">${escHtml(v.size)}</span>
-      <input type="number" min="0" value="${v.stock}" onchange="updateVariantStock(${i}, this.value)" class="variant-stock-input">
+      <div class="stock-stepper">
+        <button type="button" class="stepper-btn" onclick="stepStock(${i}, -1)">−</button>
+        <input type="number" min="0" value="${v.stock}" onchange="updateVariantStock(${i}, this.value)" class="variant-stock-input">
+        <button type="button" class="stepper-btn" onclick="stepStock(${i}, 1)">+</button>
+      </div>
       <button type="button" class="btn-icon btn-danger" onclick="removeVariantRow(${i})"><i class="fas fa-times"></i></button>
     </div>`).join('');
 }
 
 function updateVariantStock(i, val) {
-  _variantRows[i].stock = parseInt(val) || 0;
+  _variantRows[i].stock = Math.max(0, parseInt(val) || 0);
+}
+
+function stepStock(i, delta) {
+  _variantRows[i].stock = Math.max(0, (_variantRows[i].stock || 0) + delta);
+  renderVariantsGrid();
 }
 
 function addVariantRow() {

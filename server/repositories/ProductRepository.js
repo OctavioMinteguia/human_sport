@@ -31,14 +31,16 @@ class ProductRepository {
     return Promise.all(products.map(p => this.findWithDetails(p.id)));
   }
 
-  async create({ colors = [], sizes = [], image, ...data }) {
+  async create({ colors = [], variants = [], sizes = [], image, ...data }) {
     return db.transaction(async (trx) => {
       const [id] = await trx('products').insert(data);
 
-      if (sizes.length) {
-        await trx('product_variants').insert(
-          sizes.map(size => ({ product_id: id, size, stock: 0 }))
-        );
+      const variantRows = variants.length
+        ? variants.map(v => ({ product_id: id, size: v.size, stock: v.stock || 0 }))
+        : sizes.map(s => ({ product_id: id, size: s, stock: 0 }));
+
+      if (variantRows.length) {
+        await trx('product_variants').insert(variantRows);
       }
 
       if (colors.length) {
@@ -51,7 +53,7 @@ class ProductRepository {
     });
   }
 
-  async update(id, { colors, ...data }) {
+  async update(id, { colors, variants, ...data }) {
     data.updated_at = db.fn.now();
     return db.transaction(async (trx) => {
       await trx('products').where({ id }).update(data);
@@ -62,6 +64,17 @@ class ProductRepository {
           await trx('product_colors').insert(
             colors.map(c => ({ product_id: id, hex: c.hex, name: c.name || '' }))
           );
+        }
+      }
+
+      if (variants !== undefined) {
+        for (const v of variants) {
+          const existing = await trx('product_variants').where({ product_id: id, size: v.size }).first();
+          if (existing) {
+            await trx('product_variants').where({ product_id: id, size: v.size }).update({ stock: v.stock || 0 });
+          } else {
+            await trx('product_variants').insert({ product_id: id, size: v.size, stock: v.stock || 0 });
+          }
         }
       }
     });
