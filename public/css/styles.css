@@ -589,8 +589,13 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 }
 .ig-post {
     display: block; aspect-ratio: 1; border-radius: var(--r);
-    overflow: hidden; position: relative;
+    overflow: hidden; position: relative; background: var(--border);
 }
+.ig-img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.4s ease;
+}
+.ig-post:hover .ig-img { transform: scale(1.05); }
 .ig-hover {
     position: absolute; inset: 0; background: rgba(0,0,0,0.45);
     display: flex; align-items: center; justify-content: center;
