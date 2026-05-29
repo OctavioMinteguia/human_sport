@@ -325,12 +325,13 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 .cat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
 .cat-bg {
     position: absolute; inset: 0;
+    background-size: cover; background-position: center;
     transition: transform 0.5s ease;
 }
 .cat-card:hover .cat-bg { transform: scale(1.06); }
 .cat-card::after {
     content: ''; position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%);
+    background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.15) 100%);
 }
 .cat-content { position: relative; z-index: 1; padding: 22px 18px; }
 .cat-icon    { font-size: 2rem; display: block; margin-bottom: 8px; }
