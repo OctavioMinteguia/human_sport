@@ -356,7 +356,8 @@ async function loadProducts() {
 function renderProducts(filter) {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
-  const list = filter === 'all' ? allProducts : allProducts.filter(p => p.category === filter);
+  let list = filter === 'all' ? allProducts : allProducts.filter(p => p.category === filter);
+  list = list.filter(p => primaryImage(p));
   if (!list.length) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:#555">Sin productos en esta categoría.</div>`;
     return;
