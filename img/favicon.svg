@@ -1,8 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
-  <!-- Cara izquierda oscura -->
-  <polygon points="12,108 50,8 32,58" fill="#111111"/>
-  <!-- Cara derecha marrón -->
-  <polygon points="50,8 88,108 66,55" fill="#5c2a08"/>
-  <!-- Cara central -->
-  <polygon points="32,58 50,8 66,55 48,78" fill="#2e1408"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#0d0d0d"/>
+  <text x="16" y="22.5"
+    text-anchor="middle"
+    font-family="Montserrat, Arial, sans-serif"
+    font-weight="900"
+    font-size="17"
+    letter-spacing="-0.5"
+    fill="#d4812a">HS</text>
 </svg>
