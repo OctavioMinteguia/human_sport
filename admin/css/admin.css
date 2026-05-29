@@ -363,7 +363,8 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tr:hover td { background: rgba(255,255,255,0.02); }
 .data-table tfoot td { border-top: 1px solid var(--border); border-bottom: none; }
-.actions-cell { white-space: nowrap; display: flex; gap: 6px; align-items: center; }
+.actions-cell { white-space: nowrap; display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
+.data-table th:last-child { text-align: right; }
 
 /* Modal overlay (new naming) */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(3px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
