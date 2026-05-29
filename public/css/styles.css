@@ -910,6 +910,21 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
     .ig-header { flex-direction: column; text-align: center; }
     .about-stats { gap: 10px; }
     .stat-val { font-size: 1rem; }
+
+    /* Nuestra historia — centrado en mobile */
+    .about { text-align: center; }
+    .about-logo-wrap { margin: 0 auto; }
+    .about-stats { text-align: center; }
+
+    /* Footer — centrado en mobile */
+    .footer-brand { align-items: center; text-align: center; }
+    .footer-brand p { max-width: 100%; }
+    .footer-social { justify-content: center; }
+    .footer-links { text-align: center; }
+    .footer-links ul { align-items: center; }
+    .footer-contact { text-align: center; }
+    .footer-contact .footer-contact-item { justify-content: center; }
+    .footer-bottom { justify-content: center; text-align: center; }
 }
 
 @media (max-width: 480px) {
