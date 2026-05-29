@@ -248,6 +248,7 @@ function renderProductsTable() {
 // ------------------------------------------------
 let _variantRows  = [];  // [{size, stock}]
 let _colorRows    = [];  // [{hex, name}]
+let _pendingImages = []; // File objects selected but not yet uploaded
 
 function openNewProduct() {
   _variantRows = [
@@ -258,6 +259,7 @@ function openNewProduct() {
     { size: 'XL', stock: 0 }
   ];
   _colorRows = [];
+  _pendingImages = [];
   document.getElementById('productId').value       = '';
   document.getElementById('prodName').value        = '';
   document.getElementById('prodBrand').value       = 'Lady Fit';
@@ -271,6 +273,8 @@ function openNewProduct() {
   document.getElementById('productModalTitle').textContent = 'Nuevo Producto';
   renderVariantsGrid();
   renderColorsGrid();
+  renderPendingImages();
+  document.getElementById('prodExistingImages').innerHTML = '';
   document.getElementById('productModal').classList.add('open');
 }
 
@@ -279,6 +283,7 @@ async function openEditProduct(id) {
     const p = await ADMIN_API.getProduct(id);
     _variantRows = (p.variants || []).map(v => ({ size: v.size, stock: v.stock }));
     _colorRows   = (p.colors   || []).map(c => ({ hex: c.hex, name: c.name }));
+    _pendingImages = [];
 
     document.getElementById('productId').value          = p.id;
     document.getElementById('prodName').value           = p.name;
@@ -293,6 +298,8 @@ async function openEditProduct(id) {
     document.getElementById('productModalTitle').textContent = 'Editar Producto';
     renderVariantsGrid();
     renderColorsGrid();
+    renderPendingImages();
+    renderProdExistingImages(p.images || []);
     document.getElementById('productModal').classList.add('open');
   } catch (e) {
     showToast(e.message, 'error');
@@ -301,6 +308,7 @@ async function openEditProduct(id) {
 
 function closeProductModal() {
   document.getElementById('productModal').classList.remove('open');
+  _pendingImages = [];
 }
 
 function renderVariantsGrid() {
@@ -356,6 +364,83 @@ function removeColorRow(i) {
   renderColorsGrid();
 }
 
+// ------------------------------------------------
+// PRODUCT FORM — inline image upload
+// ------------------------------------------------
+function initProdUploadZone() {
+  const zone  = document.getElementById('prodUploadZone');
+  const input = document.getElementById('prodImageInput');
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    Array.from(e.dataTransfer.files).forEach(f => _pendingImages.push(f));
+    renderPendingImages();
+  });
+  input.addEventListener('change', () => {
+    Array.from(input.files).forEach(f => _pendingImages.push(f));
+    renderPendingImages();
+    input.value = '';
+  });
+}
+
+function renderPendingImages() {
+  const el = document.getElementById('prodPendingImages');
+  if (!_pendingImages.length) { el.innerHTML = ''; return; }
+  el.innerHTML = _pendingImages.map((f, i) => {
+    const url = URL.createObjectURL(f);
+    return `<div class="img-item">
+      <img src="${url}" alt="">
+      <button type="button" class="img-remove-btn" onclick="removePendingImage(${i})" title="Quitar">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removePendingImage(i) {
+  _pendingImages.splice(i, 1);
+  renderPendingImages();
+}
+
+function renderProdExistingImages(images) {
+  const el = document.getElementById('prodExistingImages');
+  if (!images.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<p class="form-sublabel">Fotos actuales</p>` + images.map(img => `
+    <div class="image-row">
+      <img src="${escHtml(img.url)}" alt="" class="image-preview">
+      <div class="image-info">
+        ${img.is_primary ? '<span class="badge badge-delivered">Principal</span>' : ''}
+      </div>
+      <div class="image-actions">
+        ${!img.is_primary ? `<button type="button" class="btn-sm btn-outline" onclick="setProdPrimaryImage(${img.id})">Principal</button>` : ''}
+        <button type="button" class="btn-sm btn-danger" onclick="deleteProdImage(${img.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+async function setProdPrimaryImage(imgId) {
+  const id = document.getElementById('productId').value;
+  if (!id) return;
+  try {
+    await ADMIN_API.setPrimaryImage(id, imgId);
+    const p = await ADMIN_API.getProduct(id);
+    renderProdExistingImages(p.images || []);
+    loadProducts();
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+async function deleteProdImage(imgId) {
+  const id = document.getElementById('productId').value;
+  if (!id) return;
+  if (!confirm('¿Eliminar esta imagen?')) return;
+  try {
+    await ADMIN_API.deleteImage(id, imgId);
+    const p = await ADMIN_API.getProduct(id);
+    renderProdExistingImages(p.images || []);
+    loadProducts();
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
 async function saveProduct() {
   const id = document.getElementById('productId').value;
   const data = {
@@ -377,13 +462,26 @@ async function saveProduct() {
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
   try {
+    let productId;
     if (id) {
       await ADMIN_API.updateProduct(id, data);
-      showToast('Producto actualizado');
+      productId = parseInt(id);
     } else {
-      await ADMIN_API.createProduct(data);
-      showToast('Producto creado');
+      const created = await ADMIN_API.createProduct(data);
+      productId = created.id;
     }
+
+    if (_pendingImages.length > 0) {
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo fotos...';
+      for (const file of _pendingImages) {
+        const fd = new FormData();
+        fd.append('image', file);
+        await ADMIN_API.uploadImage(productId, fd);
+      }
+      _pendingImages = [];
+    }
+
+    showToast(id ? 'Producto actualizado' : 'Producto creado');
     closeProductModal();
     loadProducts();
   } catch (e) {
@@ -789,8 +887,9 @@ async function init() {
     });
   });
 
-  // Upload zone
+  // Upload zones
   initUploadZone();
+  initProdUploadZone();
 
   // Load initial view
   loadOverview();
