@@ -400,32 +400,143 @@ function initCategoryCards() {
 }
 
 function initSlider() {
-  const container = document.getElementById('sliderContainer');
+  const container    = document.getElementById('sliderContainer');
   if (!container) return;
-  const slides = container.querySelectorAll('.slide');
-  const dots   = document.querySelectorAll('.dot');
-  let current = 0, autoTimer = null;
+  const slides       = container.querySelectorAll('.slide');
+  const dots         = document.querySelectorAll('.dot');
+  const progressFill = document.getElementById('sliderProgressFill');
+  let current = 0, autoTimer = null, progressTween = null, busy = false;
 
-  function goTo(idx) {
-    current = ((idx % slides.length) + slides.length) % slides.length;
-    container.style.transform = `translateX(-${current * 100}%)`;
-    slides.forEach((s, i) => s.classList.toggle('active', i === current));
-    dots.forEach((d, i)   => d.classList.toggle('active', i === current));
+  function kenBurns(img) {
+    gsap.fromTo(img, { scale: 1 }, { scale: 1.08, duration: 7, ease: 'none', overwrite: true });
   }
-  function next() { goTo(current + 1); }
-  function prev() { goTo(current - 1); }
-  function startAuto() { clearInterval(autoTimer); autoTimer = setInterval(next, 5000); }
 
-  goTo(0); startAuto();
+  function killProgress() {
+    if (progressTween) { progressTween.kill(); progressTween = null; }
+  }
+
+  function startProgress() {
+    killProgress();
+    if (!progressFill) return;
+    gsap.set(progressFill, { scaleX: 0 });
+    progressTween = gsap.to(progressFill, { scaleX: 1, duration: 5, ease: 'none' });
+  }
+
+  function animateSlideIn(slide) {
+    const tag   = slide.querySelector('.slide-tag');
+    const title = slide.querySelector('.slide-title');
+    const btn   = slide.querySelector('.btn');
+    if (tag)   gsap.fromTo(tag,   { x: -60, opacity: 0 },            { x: 0, opacity: 1, duration: 0.6,  ease: 'power3.out',   delay: 0.35 });
+    if (title) gsap.fromTo(title, { y: 90,  opacity: 0, skewX: -4 }, { y: 0, opacity: 1, skewX: 0, duration: 0.75, ease: 'power4.out', delay: 0.48 });
+    if (btn)   gsap.fromTo(btn,   { y: 30,  opacity: 0, scale: 0.8 }, { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: 'back.out(1.6)', delay: 0.72 });
+  }
+
+  function goTo(idx, dir) {
+    if (busy) return;
+    const from = current;
+    const to   = ((idx % slides.length) + slides.length) % slides.length;
+    if (from === to) return;
+    busy = true;
+    current = to;
+
+    const entering = slides[to];
+    const leaving  = slides[from];
+
+    // Wipe: entering reveals over leaving from the correct side
+    gsap.set(entering, { zIndex: 2, clipPath: dir >= 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)' });
+    gsap.set(leaving,  { zIndex: 1 });
+
+    gsap.to(entering, {
+      clipPath: 'inset(0 0% 0 0%)',
+      duration: 0.88,
+      ease: 'power3.inOut',
+      onComplete() {
+        gsap.set(leaving, { zIndex: 0, clipPath: 'inset(0 0 0 100%)' });
+        busy = false;
+      },
+    });
+
+    // Leaving: subtle scale + fade during wipe
+    gsap.to(leaving.querySelector('.slide-img'),  { scale: 1.1, opacity: 0.6, duration: 0.88, ease: 'power3.inOut' });
+    gsap.fromTo(entering.querySelector('.slide-img'), { scale: 1.1, opacity: 1 }, { scale: 1, duration: 0.88, ease: 'power3.inOut',
+      onComplete() { kenBurns(entering.querySelector('.slide-img')); }
+    });
+
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    animateSlideIn(entering);
+    startProgress();
+  }
+
+  function next() { goTo(current + 1,  1); }
+  function prev() { goTo(current - 1, -1); }
+  function startAuto() { clearInterval(autoTimer); autoTimer = setInterval(next, 5000); startProgress(); }
+
+  // Init: first slide visible, rest hidden
+  slides.forEach((s, i) => gsap.set(s, { zIndex: i === 0 ? 1 : 0, clipPath: i === 0 ? 'inset(0 0% 0 0%)' : 'inset(0 0 0 100%)' }));
+  animateSlideIn(slides[0]);
+  kenBurns(slides[0].querySelector('.slide-img'));
+  startAuto();
+
   document.getElementById('sliderNext')?.addEventListener('click', () => { next(); startAuto(); });
   document.getElementById('sliderPrev')?.addEventListener('click', () => { prev(); startAuto(); });
-  dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.idx)); startAuto(); }));
+  dots.forEach(d => d.addEventListener('click', () => {
+    const idx = parseInt(d.dataset.idx);
+    goTo(idx, idx > current ? 1 : -1);
+    startAuto();
+  }));
+
   let touchX = 0;
   container.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
   container.addEventListener('touchend',   e => {
     const diff = touchX - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 40) { diff > 0 ? next() : prev(); startAuto(); }
   }, { passive: true });
+}
+
+function initBestsellers() {
+  const track = document.getElementById('bsTrack');
+  if (!track) return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const cards = Array.from(track.querySelectorAll('.bs-card'));
+  const GAP = 16;
+  let current = 0;
+
+  // Entrance animation: cards reveal from top (clip-path, no overflow issues)
+  gsap.from(cards, {
+    scrollTrigger: { trigger: track, start: 'top 85%', once: true },
+    clipPath: 'inset(0 0 100% 0)',
+    opacity: 0,
+    duration: 0.65,
+    stagger: 0.1,
+    ease: 'power3.out',
+  });
+
+  function cardWidth()   { return cards[0].offsetWidth + GAP; }
+  function visibleCount(){ return Math.floor(track.parentElement.offsetWidth / cardWidth()); }
+  function maxIdx()      { return Math.max(0, cards.length - visibleCount()); }
+
+  function goTo(idx) {
+    current = Math.max(0, Math.min(idx, maxIdx()));
+    gsap.to(track, { x: -(current * cardWidth()), duration: 0.48, ease: 'power2.out' });
+    const prev = document.getElementById('bsPrev');
+    const next = document.getElementById('bsNext');
+    if (prev) prev.style.opacity = current === 0 ? '0.3' : '1';
+    if (next) next.style.opacity = current >= maxIdx() ? '0.3' : '1';
+  }
+
+  document.getElementById('bsPrev')?.addEventListener('click', () => goTo(current - 1));
+  document.getElementById('bsNext')?.addEventListener('click', () => goTo(current + 1));
+
+  let touchX = 0;
+  track.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend',   e => {
+    const diff = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
+  }, { passive: true });
+
+  goTo(0);
 }
 
 function initMobileMenu() {
@@ -510,7 +621,7 @@ function initSmoothScroll() {
 // ================================================
 document.addEventListener('DOMContentLoaded', async () => {
   renderCart(); syncBadge();
-  initSlider(); initFilters(); initCategoryCards();
+  initSlider(); initBestsellers(); initFilters(); initCategoryCards();
   initMobileMenu(); initStickyHeader();
   observeElements(); initNewsletter(); initSmoothScroll();
 

@@ -110,6 +110,10 @@
             </div>
         </div>
 
+        <div class="slider-progress">
+            <div class="slider-progress-fill" id="sliderProgressFill"></div>
+        </div>
+
         <button class="slider-arrow slider-prev" id="sliderPrev" aria-label="Slide anterior">
             <i class="fas fa-chevron-left"></i>
         </button>
@@ -156,6 +160,107 @@
                         <span>Respondemos rápido</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOS MÁS VENDIDOS -->
+    <section class="bestsellers" id="mas-vendidos">
+        <div class="container">
+            <div class="bs-header fade-in">
+                <div>
+                    <div class="label-tag">LO QUE MÁS SE LLEVA</div>
+                    <h2 class="section-title">LOS MÁS <span class="accent">VENDIDOS</span></h2>
+                </div>
+                <a href="#catalogo" class="btn btn-outline">Ver catálogo completo</a>
+            </div>
+            <div class="bs-wrapper">
+                <button class="bs-arrow bs-prev" id="bsPrev" aria-label="Anterior">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="bs-viewport">
+                    <div class="bs-track" id="bsTrack">
+
+                        <article class="bs-card">
+                            <div class="bs-img-wrap">
+                                <img src="img/IMG_2862.JPG.jpeg" alt="Calza Push Up" class="bs-img">
+                                <span class="bs-badge">🔥 Top ventas</span>
+                            </div>
+                            <div class="bs-info">
+                                <div class="bs-brand">Lady Fit</div>
+                                <div class="bs-name">Calza Push Up Deportiva</div>
+                                <div class="bs-price">$15.990</div>
+                                <a href="https://wa.me/5492346581240?text=Hola!%20Me%20interesa%20la%20Calza%20Push%20Up" target="_blank" class="bs-btn">
+                                    <i class="fab fa-whatsapp"></i> Consultar
+                                </a>
+                            </div>
+                        </article>
+
+                        <article class="bs-card">
+                            <div class="bs-img-wrap">
+                                <img src="img/IMG_2858.JPG.jpeg" alt="Musculosa Lady Fit" class="bs-img">
+                                <span class="bs-badge bs-badge-fav">⭐ Favorita</span>
+                            </div>
+                            <div class="bs-info">
+                                <div class="bs-brand">Lady Fit</div>
+                                <div class="bs-name">Musculosa Entrenamiento</div>
+                                <div class="bs-price">$9.990</div>
+                                <a href="https://wa.me/5492346581240?text=Hola!%20Me%20interesa%20la%20Musculosa%20Entrenamiento" target="_blank" class="bs-btn">
+                                    <i class="fab fa-whatsapp"></i> Consultar
+                                </a>
+                            </div>
+                        </article>
+
+                        <article class="bs-card">
+                            <div class="bs-img-wrap">
+                                <img src="img/IMG_2860.JPG.jpeg" alt="Buzo Hoodie" class="bs-img">
+                                <span class="bs-badge bs-badge-new">✨ Nuevo</span>
+                            </div>
+                            <div class="bs-info">
+                                <div class="bs-brand">Lady Fit</div>
+                                <div class="bs-name">Buzo Hoodie FW'26</div>
+                                <div class="bs-price">$24.990</div>
+                                <a href="https://wa.me/5492346581240?text=Hola!%20Me%20interesa%20el%20Buzo%20Hoodie" target="_blank" class="bs-btn">
+                                    <i class="fab fa-whatsapp"></i> Consultar
+                                </a>
+                            </div>
+                        </article>
+
+                        <article class="bs-card">
+                            <div class="bs-img-wrap">
+                                <img src="img/IMG_2861.JPG.jpeg" alt="Conjunto Deportivo" class="bs-img">
+                                <span class="bs-badge">🔥 Top ventas</span>
+                            </div>
+                            <div class="bs-info">
+                                <div class="bs-brand">Lady Fit</div>
+                                <div class="bs-name">Conjunto Deportivo Completo</div>
+                                <div class="bs-price">$29.990</div>
+                                <a href="https://wa.me/5492346581240?text=Hola!%20Me%20interesa%20el%20Conjunto%20Deportivo" target="_blank" class="bs-btn">
+                                    <i class="fab fa-whatsapp"></i> Consultar
+                                </a>
+                            </div>
+                        </article>
+
+                        <article class="bs-card">
+                            <div class="bs-img-wrap">
+                                <img src="img/IMG_2888.JPG.jpeg" alt="Top Deportivo" class="bs-img">
+                                <span class="bs-badge bs-badge-fav">⭐ Favorita</span>
+                            </div>
+                            <div class="bs-info">
+                                <div class="bs-brand">Lady Fit</div>
+                                <div class="bs-name">Top Deportivo Premium</div>
+                                <div class="bs-price">$11.990</div>
+                                <a href="https://wa.me/5492346581240?text=Hola!%20Me%20interesa%20el%20Top%20Deportivo" target="_blank" class="bs-btn">
+                                    <i class="fab fa-whatsapp"></i> Consultar
+                                </a>
+                            </div>
+                        </article>
+
+                    </div>
+                </div>
+                <button class="bs-arrow bs-next" id="bsNext" aria-label="Siguiente">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
         </div>
     </section>
@@ -401,6 +506,7 @@
             <div class="footer-bottom">
                 <p>© 2025 Human Sport. Todos los derechos reservados.</p>
                 <p>Chivilcoy, Buenos Aires, Argentina</p>
+                <p>Built by <a href="https://wa.me/5492345404999" target="_blank" rel="noopener" class="footer-built-by">Octavio Minteguía</a></p>
             </div>
         </div>
     </footer>
@@ -422,6 +528,8 @@
         <span class="float-tooltip">¡Hablá con nosotros!</span>
     </a>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/app.js"></script>
 </body>
