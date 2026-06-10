@@ -12,7 +12,7 @@ class CheckoutController {
       }
 
       const total = items.reduce((s, i) => s + parseFloat(i.price) * parseInt(i.qty), 0);
-      const baseUrl = process.env.BASE_URL || 'http://localhost:3001';
+      const baseUrl = (process.env.BASE_URL || 'http://localhost:3001').replace(/\/+$/, '');
 
       // Leer customer del JWT si está logueado
       let customerId = null;
@@ -105,10 +105,18 @@ class CheckoutController {
 
         const update = map[mpStatus] || { payment_status: mpStatus };
 
+        // Capturar datos del pagador si la orden no los tiene
+        const payer = paymentData.payer || {};
+        const payerName = [payer.first_name, payer.last_name].filter(Boolean).join(' ').trim() || null;
+        const payerEmail = payer.email || null;
+
         if (orderId) {
+          const order = await db('orders').where({ id: orderId }).first();
           await db('orders').where({ id: orderId }).update({
-            payment_id: String(data.id),
-            ...update
+            payment_id:     String(data.id),
+            ...update,
+            ...(payerName  && !order?.customer_name  ? { customer_name:  payerName  } : {}),
+            ...(payerEmail && !order?.customer_email ? { customer_email: payerEmail } : {})
           });
         }
       }
