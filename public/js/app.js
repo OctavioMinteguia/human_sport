@@ -134,9 +134,9 @@ function renderCart() {
       <span class="cart-total-lbl">Total</span>
       <span class="cart-total-amt">${fmt(cartTotal())}</span>
     </div>
-    <button class="btn-mp" id="btnMercadoPago" onclick="checkoutMercadoPago()">
-      Pagar con MercadoPago
-    </button>
+    ${isPreviewEnabled() ? `<button class="btn-mp" id="btnMercadoPago" onclick="checkoutMercadoPago()">
+      Pagar
+    </button>` : ''}
     <button class="btn-checkout" onclick="checkoutWhatsApp()">
       <i class="fab fa-whatsapp"></i> Comprar por WhatsApp
     </button>
@@ -179,7 +179,7 @@ async function _doMpCheckout() {
   } catch (e) {
     console.error('MercadoPago error:', e);
     alert('Hubo un problema al iniciar el pago. Por favor intentá de nuevo o contactanos por WhatsApp.');
-    if (btn) { btn.disabled = false; btn.textContent = 'Pagar con MercadoPago'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Pagar'; }
   }
 }
 
@@ -860,6 +860,13 @@ function initSmoothScroll() {
 // ================================================
 // AUTH
 // ================================================
+// ================================================
+// FEATURE PREVIEW FLAG
+// ================================================
+function isPreviewEnabled() {
+  return document.cookie.split(';').some(c => c.trim().startsWith('hs_preview=1'));
+}
+
 let currentUser = null;
 
 function getStoredToken() { return localStorage.getItem('hs_token'); }
@@ -882,6 +889,7 @@ function clearSession() {
 function renderHeaderUser() {
   const el = document.getElementById('headerUser');
   if (!el) return;
+  if (!isPreviewEnabled()) { el.innerHTML = ''; return; }
   if (currentUser) {
     el.innerHTML = `
       <div class="user-dropdown" id="userDropdown">

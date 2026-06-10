@@ -32,6 +32,28 @@ app.use('/api/checkout',    checkoutRoutes);
 app.use('/api/webhook',     checkoutRoutes);
 app.use('/api/auth',        authRoutes);
 
+// ── Feature preview toggle ───────────────────────────────────────────────────
+app.get('/preview', (req, res) => {
+  const { key, off } = req.query;
+  const validKey = process.env.PREVIEW_KEY;
+  if (!validKey || key !== validKey) {
+    return res.status(403).send('Clave incorrecta');
+  }
+  const isProd    = (process.env.NODE_ENV === 'production') || req.hostname !== 'localhost';
+  const cookieOpts = {
+    httpOnly: false,       // debe ser legible desde JS del frontend
+    sameSite: 'lax',
+    secure:   isProd,
+    maxAge:   off ? 0 : 7 * 24 * 60 * 60 * 1000  // 7 días o eliminar
+  };
+  if (off) {
+    res.clearCookie('hs_preview', cookieOpts);
+    return res.send('<script>document.cookie="hs_preview=;Max-Age=0;path=/";location.href="/";</script>');
+  }
+  res.cookie('hs_preview', '1', cookieOpts);
+  res.send('<script>location.href="/";</script>');
+});
+
 // ── Páginas de pago (antes del catch-all) ────────────────────────────────────
 app.get('/pago/exito',     (req, res) => res.sendFile(path.join(__dirname, '../public/pago/exito.html')));
 app.get('/pago/pendiente', (req, res) => res.sendFile(path.join(__dirname, '../public/pago/pendiente.html')));
