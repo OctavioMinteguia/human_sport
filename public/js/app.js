@@ -286,8 +286,8 @@ function openSizeModal(id) {
       `<button class="color-swatch" data-color="${c.name}" title="${c.name}"
         style="background:${c.hex}" onclick="selectColor('${c.name}')"></button>`
     ).join('');
-    colorName.textContent = '';
     colorsWrap.style.display = '';
+    selectColor(colors[0].name);
   } else {
     colorsWrap.style.display = 'none';
   }
@@ -335,8 +335,9 @@ function showModalValidation(id, msg) {
 
 function confirmAddToCart() {
   const hasColors = (pendingProduct?.colors || []).length > 0;
+  const hasSizes  = (pendingProduct?.variants || []).length > 0;
   const missing = [];
-  if (!pendingSize)              missing.push('talle');
+  if (hasSizes && !pendingSize)   missing.push('talle');
   if (hasColors && !pendingColor) missing.push('color');
 
   if (missing.length) {
@@ -423,6 +424,7 @@ function openProductDetail(id) {
         style="background:${c.hex}" onclick="selectPdColor('${c.name}')"></button>`
     ).join('');
     colorsWrap.style.display = '';
+    selectPdColor(colors[0].name);
   } else {
     colorsWrap.style.display = 'none';
   }
@@ -473,8 +475,9 @@ function changePdQty(delta) {
 
 function confirmPdAddToCart() {
   const hasColors = (pdProduct?.colors || []).length > 0;
+  const hasSizes  = (pdProduct?.variants || []).length > 0;
   const missing = [];
-  if (!pdSize)              missing.push('talle');
+  if (hasSizes && !pdSize)   missing.push('talle');
   if (hasColors && !pdColor) missing.push('color');
 
   if (missing.length) {
