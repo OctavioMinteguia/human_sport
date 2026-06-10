@@ -550,6 +550,7 @@ async function loadProducts() {
   try {
     allProducts = await API.getProducts();
     window.__products = allProducts;
+    renderCategoryFilters(allProducts);
     renderProducts('all');
   } catch {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:#555">
@@ -578,13 +579,21 @@ function toggleWish(btn) {
   btn.querySelector('i').className = btn.classList.contains('wished') ? 'fas fa-heart' : 'far fa-heart';
 }
 
-function initFilters() {
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderProducts(btn.dataset.filter);
-    });
+function setFilter(filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const active = document.querySelector(`.filter-btn[data-filter="${filter}"]`);
+  if (active) active.classList.add('active');
+  renderProducts(filter);
+}
+
+function renderCategoryFilters(products) {
+  const bar = document.getElementById('filterBar');
+  if (!bar) return;
+  const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
+  bar.innerHTML = `<button class="filter-btn active" data-filter="all">Todos</button>` +
+    cats.map(c => `<button class="filter-btn" data-filter="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</button>`).join('');
+  bar.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => setFilter(btn.dataset.filter));
   });
 }
 
@@ -594,11 +603,7 @@ function initCategoryCards() {
       e.preventDefault();
       const filter = card.dataset.filter;
       document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        const btn = document.querySelector(`.filter-btn[data-filter="${filter}"]`);
-        if (btn) { btn.classList.add('active'); renderProducts(filter); }
-      }, 550);
+      setTimeout(() => setFilter(filter), 550);
     });
   });
 }
@@ -1128,7 +1133,7 @@ document.addEventListener('click', () => closeUserDropdown());
 document.addEventListener('DOMContentLoaded', async () => {
   initAuth();
   renderCart(); syncBadge();
-  initSlider(); initFilters(); initCategoryCards();
+  initSlider(); initCategoryCards();
   initMobileMenu(); initStickyHeader();
   observeElements(); initNewsletter(); initSmoothScroll();
 

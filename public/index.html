@@ -24,14 +24,14 @@
     <!-- ANNOUNCEMENT BAR -->
     <div class="announcement-bar">
         <div class="announcement-track">
-            <span>🔥 NUEVO STOCK — COLECCIÓN LADY FIT 2025</span>
+            <span>🔥 NUEVO STOCK — COLECCIÓN LADY FIT 2026</span>
             <span>✨ ENVÍOS A TODO EL PAÍS</span>
             <span>💬 CONSULTÁ POR WHATSAPP ANTES DE COMPRAR</span>
-            <span>🎽 TALLES XS AL XL DISPONIBLES</span>
-            <span>🔥 NUEVO STOCK — COLECCIÓN LADY FIT 2025</span>
+            <span>🎽 TALLES S AL XL DISPONIBLES</span>
+            <span>🔥 NUEVO STOCK — COLECCIÓN LADY FIT 2026</span>
             <span>✨ ENVÍOS A TODO EL PAÍS</span>
             <span>💬 CONSULTÁ POR WHATSAPP ANTES DE COMPRAR</span>
-            <span>🎽 TALLES XS AL XL DISPONIBLES</span>
+            <span>🎽 TALLES S AL XL DISPONIBLES</span>
         </div>
     </div>
 
@@ -152,7 +152,7 @@
                 <div class="benefit-item fade-in">
                     <div class="benefit-icon"><i class="fas fa-undo"></i></div>
                     <div>
-                        <strong>Cambios sin drama</strong>
+                        <strong>Cambios sin problema</strong>
                         <span>Si no es tu talle</span>
                     </div>
                 </div>
@@ -244,14 +244,7 @@
                 <h2 class="section-title">NUESTRO <span class="accent">CATÁLOGO</span></h2>
                 <p class="section-sub">Prendas seleccionadas para tu mejor versión</p>
             </div>
-            <div class="filter-bar fade-in">
-                <button class="filter-btn active" data-filter="all">Todos</button>
-                <button class="filter-btn" data-filter="calzas">Calzas</button>
-                <button class="filter-btn" data-filter="tops">Tops</button>
-                <button class="filter-btn" data-filter="buzos">Buzos</button>
-                <button class="filter-btn" data-filter="conjuntos">Conjuntos</button>
-                <button class="filter-btn" data-filter="shorts">Shorts</button>
-            </div>
+            <div class="filter-bar fade-in" id="filterBar"></div>
             <div class="products-grid" id="productsGrid"></div>
         </div>
     </section>
@@ -296,6 +289,9 @@
                     <p class="modal-validation" id="pdValidation"></p>
                     <button class="btn btn-primary btn-full" id="pdAddBtn" style="margin-top:8px">
                         <i class="fas fa-shopping-bag"></i> Agregar al carrito
+                    </button>
+                    <button class="btn-pd-close-mobile" onclick="closeProductDetail()">
+                        <i class="fas fa-chevron-left"></i> Volver
                     </button>
                 </div>
             </div>

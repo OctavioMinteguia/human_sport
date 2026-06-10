@@ -667,12 +667,21 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 }
 .prod-img-wrap:hover .prod-view-overlay { opacity: 1; }
 
+.btn-pd-close-mobile { display: none; }
+
 @media (max-width: 640px) {
     .pd-content { grid-template-columns: 1fr; }
     .pd-gallery { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
     .pd-img-main { aspect-ratio: 1/1; }
     .pd-info { padding: 20px; max-height: none; }
     .pd-name { font-size: 1.15rem; }
+    .btn-pd-close-mobile {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        width: 100%; margin-top: 12px; padding: 12px;
+        background: transparent; border: 1px solid var(--border);
+        border-radius: 8px; color: var(--text-muted); font-size: 0.9rem;
+        cursor: pointer;
+    }
 }
 
 /* ================================
