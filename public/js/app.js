@@ -337,8 +337,8 @@ function confirmAddToCart() {
   const hasColors = (pendingProduct?.colors || []).length > 0;
   const hasSizes  = (pendingProduct?.variants || []).length > 0;
   const missing = [];
-  if (hasSizes && !pendingSize)   missing.push('talle');
-  if (hasColors && !pendingColor) missing.push('color');
+  if (hasSizes && !pendingSize)       missing.push('talle');
+  if (hasColors && pendingColor == null) missing.push('color');
 
   if (missing.length) {
     const msg = 'Seleccioná ' + missing.join(' y ');
@@ -477,8 +477,8 @@ function confirmPdAddToCart() {
   const hasColors = (pdProduct?.colors || []).length > 0;
   const hasSizes  = (pdProduct?.variants || []).length > 0;
   const missing = [];
-  if (hasSizes && !pdSize)   missing.push('talle');
-  if (hasColors && !pdColor) missing.push('color');
+  if (hasSizes && !pdSize)       missing.push('talle');
+  if (hasColors && pdColor == null) missing.push('color');
 
   if (missing.length) {
     const msg = 'Seleccioná ' + missing.join(' y ');
@@ -550,7 +550,7 @@ async function loadProducts() {
   try {
     allProducts = await API.getProducts();
     window.__products = allProducts;
-    renderCategoryFilters();
+    renderCategoryFilters(allProducts);
     renderProducts('all');
   } catch {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:#555">
@@ -586,8 +586,13 @@ function setFilter(filter) {
   renderProducts(filter);
 }
 
-function renderCategoryFilters() {
-  document.getElementById('filterBar')?.querySelectorAll('.filter-btn').forEach(btn => {
+function renderCategoryFilters(products) {
+  const bar = document.getElementById('filterBar');
+  if (!bar) return;
+  const cats = [...new Set((products || allProducts).map(p => p.category).filter(Boolean))];
+  bar.innerHTML = `<button class="filter-btn active" data-filter="all">Todos</button>` +
+    cats.map(c => `<button class="filter-btn" data-filter="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</button>`).join('');
+  bar.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => setFilter(btn.dataset.filter));
   });
 }
@@ -1128,7 +1133,7 @@ document.addEventListener('click', () => closeUserDropdown());
 document.addEventListener('DOMContentLoaded', async () => {
   initAuth();
   renderCart(); syncBadge();
-  initSlider(); renderCategoryFilters(); initCategoryCards();
+  initSlider(); initCategoryCards();
   initMobileMenu(); initStickyHeader();
   observeElements(); initNewsletter(); initSmoothScroll();
 
