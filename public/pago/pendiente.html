@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago pendiente — Human Sport</title>
+  <link rel="icon" type="image/png" href="/img/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#080808;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{background:#181818;border:1px solid #252525;border-radius:16px;padding:48px 40px;max-width:440px;width:100%;text-align:center}
+    .icon{font-size:4rem;margin-bottom:20px}
+    h1{font-family:'Montserrat',sans-serif;font-size:1.6rem;font-weight:900;margin-bottom:12px}
+    p{color:#888;line-height:1.7;margin-bottom:8px;font-size:0.95rem}
+    .order{color:#ca8a04;font-weight:700;font-size:1rem;margin:16px 0}
+    .btn{display:inline-flex;align-items:center;gap:8px;margin-top:28px;padding:14px 28px;background:#d4812a;color:#fff;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:0.82rem;letter-spacing:1px;text-transform:uppercase;text-decoration:none;transition:.3s ease}
+    .btn:hover{background:#b86a1f;transform:translateY(-2px)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">⏳</div>
+    <h1>Pago pendiente</h1>
+    <p>Tu pago está siendo procesado. Esto puede tardar unas horas si pagaste en efectivo.</p>
+    <p>Cuando se acredite, te avisamos por WhatsApp.</p>
+    <div class="order" id="orderRef"></div>
+    <a href="/" class="btn">← Volver a la tienda</a>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const ref = params.get('external_reference');
+    if (ref) document.getElementById('orderRef').textContent = 'Pedido #' + ref;
+  </script>
+</body>
+</html>

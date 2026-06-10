@@ -7,7 +7,8 @@ const productRoutes     = require('./routes/products');
 const orderRoutes       = require('./routes/orders');
 const adminRoutes       = require('./routes/admin');
 const bestsellerRoutes  = require('./routes/bestsellers');
-const AppError      = require('./utils/AppError');
+const checkoutRoutes    = require('./routes/checkout');
+const AppError          = require('./utils/AppError');
 
 const app = express();
 
@@ -26,6 +27,13 @@ app.use('/api/products',     productRoutes);
 app.use('/api/orders',      orderRoutes);
 app.use('/api/admin',       adminRoutes);
 app.use('/api/bestsellers', bestsellerRoutes);
+app.use('/api/checkout',    checkoutRoutes);
+app.use('/api/webhook',     checkoutRoutes);
+
+// ── Páginas de pago (antes del catch-all) ────────────────────────────────────
+app.get('/pago/exito',     (req, res) => res.sendFile(path.join(__dirname, '../public/pago/exito.html')));
+app.get('/pago/pendiente', (req, res) => res.sendFile(path.join(__dirname, '../public/pago/pendiente.html')));
+app.get('/pago/error',     (req, res) => res.sendFile(path.join(__dirname, '../public/pago/error.html')));
 
 // ── SPA fallbacks ─────────────────────────────────────────────────────────────
 app.get('/admin/*', (req, res) => {

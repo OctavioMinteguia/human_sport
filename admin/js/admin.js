@@ -76,6 +76,16 @@ function statusLabel(s) {
   return map[s] || { label: s, cls: '' };
 }
 
+function paymentBadge(s) {
+  const map = {
+    pending:    { label: 'Sin pagar',  cls: 'badge-pending' },
+    approved:   { label: 'Pagado',     cls: 'badge-delivered' },
+    in_process: { label: 'En proceso', cls: 'badge-preparing' },
+    rejected:   { label: 'Rechazado',  cls: 'badge-cancelled' }
+  };
+  return map[s] || { label: s || 'WhatsApp', cls: 'badge-confirmed' };
+}
+
 function showToast(msg, type = 'success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -891,6 +901,7 @@ function renderOrdersTable(orders) {
           <th>Cliente</th>
           <th>Total</th>
           <th>Estado</th>
+          <th>Pago</th>
           <th>Cambiar estado</th>
           <th>Ver</th>
         </tr>
@@ -899,12 +910,14 @@ function renderOrdersTable(orders) {
         ${orders.map(o => {
           const { label, cls } = statusLabel(o.status);
           const date = new Date(o.created_at).toLocaleDateString('es-AR');
+          const payBadge = paymentBadge(o.payment_status);
           return `<tr>
             <td>#${o.id}</td>
             <td>${date}</td>
             <td>${escHtml(o.customer_name || '—')}</td>
             <td>${fmt(o.total)}</td>
             <td><span class="badge ${cls}">${label}</span></td>
+            <td><span class="badge ${payBadge.cls}">${payBadge.label}</span></td>
             <td>
               <select class="status-select" onchange="changeOrderStatus(${o.id}, this.value)" data-current="${o.status}">
                 <option value="pending"   ${o.status === 'pending'   ? 'selected' : ''}>Pendiente</option>

@@ -898,6 +898,17 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 .cart-total-lbl { font-size: 0.83rem; color: var(--text); }
 .cart-total-amt { font-size: 1.35rem; font-weight: 900; font-family: 'Montserrat', sans-serif; }
 
+.btn-mp {
+    width: 100%; padding: 15px; margin-bottom: 8px;
+    background: #009EE3; color: #fff; border-radius: var(--r);
+    font-family: 'Montserrat', sans-serif; font-size: 0.88rem;
+    font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    transition: var(--ease);
+}
+.btn-mp:hover { background: #0085c2; transform: translateY(-1px); box-shadow: 0 4px 18px rgba(0,158,227,0.3); }
+.btn-mp:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
 .btn-checkout {
     width: 100%; padding: 15px;
     background: var(--wa); color: #fff; border-radius: var(--r);

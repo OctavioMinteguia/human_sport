@@ -28,6 +28,9 @@ const API = (() => {
     createOrder: (data) => request('POST', '/orders', data),
 
     // Más vendidos (público)
-    getBestsellers: () => request('GET', '/bestsellers')
+    getBestsellers: () => request('GET', '/bestsellers'),
+
+    // Checkout MercadoPago
+    createPreference: (cartItems) => request('POST', '/checkout', { items: cartItems })
   };
 })();

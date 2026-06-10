@@ -134,10 +134,40 @@ function renderCart() {
       <span class="cart-total-lbl">Total</span>
       <span class="cart-total-amt">${fmt(cartTotal())}</span>
     </div>
+    <button class="btn-mp" id="btnMercadoPago" onclick="checkoutMercadoPago()">
+      Pagar con MercadoPago
+    </button>
     <button class="btn-checkout" onclick="checkoutWhatsApp()">
       <i class="fab fa-whatsapp"></i> Comprar por WhatsApp
     </button>
     <button class="btn-clear" onclick="clearCart()">Vaciar carrito</button>`;
+}
+
+// ================================================
+// MERCADOPAGO CHECKOUT
+// ================================================
+async function checkoutMercadoPago() {
+  if (cart.length === 0) return;
+
+  const btn = document.getElementById('btnMercadoPago');
+  if (btn) { btn.disabled = true; btn.textContent = 'Procesando...'; }
+
+  try {
+    const data = await API.createPreference(cart.map(i => ({
+      id: i.id, name: i.name, brand: i.brand || '',
+      size: i.size, color: i.color || '',
+      qty: i.qty, price: i.price
+    })));
+    if (data.checkout_url) {
+      window.location.href = data.checkout_url;
+    } else {
+      throw new Error('No se recibió la URL de pago');
+    }
+  } catch (e) {
+    console.error('MercadoPago error:', e);
+    alert('Hubo un problema al iniciar el pago. Por favor intentá de nuevo o contactanos por WhatsApp.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Pagar con MercadoPago'; }
+  }
 }
 
 // ================================================
