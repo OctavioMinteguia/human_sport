@@ -134,9 +134,9 @@ function renderCart() {
       <span class="cart-total-lbl">Total</span>
       <span class="cart-total-amt">${fmt(cartTotal())}</span>
     </div>
-    ${isPreviewEnabled() ? `<button class="btn-mp" id="btnMercadoPago" onclick="checkoutMercadoPago()">
+    <button class="btn-mp" id="btnMercadoPago" onclick="checkoutMercadoPago()">
       Pagar
-    </button>` : ''}
+    </button>
     <button class="btn-checkout" onclick="checkoutWhatsApp()">
       <i class="fab fa-whatsapp"></i> Comprar por WhatsApp
     </button>
@@ -860,13 +860,6 @@ function initSmoothScroll() {
 // ================================================
 // AUTH
 // ================================================
-// ================================================
-// FEATURE PREVIEW FLAG
-// ================================================
-function isPreviewEnabled() {
-  return document.cookie.split(';').some(c => c.trim().startsWith('hs_preview=1'));
-}
-
 let currentUser = null;
 
 function getStoredToken() { return localStorage.getItem('hs_token'); }
@@ -889,7 +882,6 @@ function clearSession() {
 function renderHeaderUser() {
   const el = document.getElementById('headerUser');
   if (!el) return;
-  if (!isPreviewEnabled()) { el.innerHTML = ''; return; }
   if (currentUser) {
     el.innerHTML = `
       <div class="user-dropdown" id="userDropdown">
