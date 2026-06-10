@@ -293,6 +293,7 @@
                             <button class="modal-qty-btn" onclick="changePdQty(1)">+</button>
                         </div>
                     </div>
+                    <p class="modal-validation" id="pdValidation"></p>
                     <button class="btn btn-primary btn-full" id="pdAddBtn" style="margin-top:8px">
                         <i class="fas fa-shopping-bag"></i> Agregar al carrito
                     </button>
@@ -321,6 +322,7 @@
                         <button class="modal-qty-btn" onclick="changeModalQty(1)">+</button>
                     </div>
                 </div>
+                <p class="modal-validation" id="modalValidation"></p>
                 <button class="btn btn-primary btn-full" id="addToCartBtn">
                     <i class="fas fa-shopping-bag"></i> Agregar al carrito
                 </button>
@@ -499,7 +501,13 @@
     <div class="auth-overlay" id="authOverlay" onclick="closeAuthModal()"></div>
     <div class="auth-modal" id="authModal" role="dialog" aria-modal="true">
         <button class="auth-close" onclick="closeAuthModal()" aria-label="Cerrar">✕</button>
-        <div class="auth-logo"><img src="img/logo.png" alt="Human Sport"></div>
+        <div class="auth-logo">
+            <div class="auth-logo-text">
+                <span class="auth-logo-human">HUMAN</span>
+                <span class="auth-logo-line"></span>
+                <span class="auth-logo-sport">SPORT</span>
+            </div>
+        </div>
 
         <div class="auth-tabs">
             <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Iniciar sesión</button>
@@ -507,14 +515,14 @@
         </div>
 
         <!-- LOGIN -->
-        <form class="auth-form" id="formLogin" onsubmit="submitLogin(event)">
+        <form class="auth-form" id="formLogin" onsubmit="submitLogin(event)" autocomplete="on">
             <div class="auth-field">
                 <label>Email</label>
-                <input type="email" id="loginEmail" placeholder="tu@email.com" required autocomplete="email">
+                <input type="email" id="loginEmail" name="customer-email" placeholder="tu@email.com" required autocomplete="username">
             </div>
             <div class="auth-field">
                 <label>Contraseña</label>
-                <input type="password" id="loginPassword" placeholder="••••••" required autocomplete="current-password">
+                <input type="password" id="loginPassword" name="customer-password" placeholder="••••••" required autocomplete="current-password">
             </div>
             <div class="auth-error" id="loginError"></div>
             <button type="submit" class="auth-submit" id="loginBtn">Ingresar</button>
@@ -522,22 +530,22 @@
         </form>
 
         <!-- REGISTER -->
-        <form class="auth-form auth-form--hidden" id="formRegister" onsubmit="submitRegister(event)">
+        <form class="auth-form auth-form--hidden" id="formRegister" onsubmit="submitRegister(event)" autocomplete="on">
             <div class="auth-field">
                 <label>Nombre completo</label>
-                <input type="text" id="regName" placeholder="Tu nombre" required autocomplete="name">
+                <input type="text" id="regName" name="customer-name" placeholder="Tu nombre" required autocomplete="name">
             </div>
             <div class="auth-field">
                 <label>Email</label>
-                <input type="email" id="regEmail" placeholder="tu@email.com" required autocomplete="email">
+                <input type="email" id="regEmail" name="customer-email-new" placeholder="tu@email.com" required autocomplete="username">
             </div>
             <div class="auth-field">
                 <label>Contraseña</label>
-                <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required autocomplete="new-password">
+                <input type="password" id="regPassword" name="customer-password-new" placeholder="Mínimo 6 caracteres" required autocomplete="new-password">
             </div>
             <div class="auth-field">
                 <label>Teléfono <span style="color:#666;font-weight:400">(opcional)</span></label>
-                <input type="tel" id="regPhone" placeholder="+54 9 ...">
+                <input type="tel" id="regPhone" name="customer-phone" placeholder="+54 9 ...">
             </div>
             <div class="auth-error" id="registerError"></div>
             <button type="submit" class="auth-submit" id="registerBtn">Crear cuenta</button>
@@ -555,6 +563,36 @@
         <div class="orders-modal-body" id="ordersModalBody">
             <div class="auth-loading"><i class="fas fa-spinner fa-spin"></i></div>
         </div>
+    </div>
+
+    <!-- MIS DATOS MODAL -->
+    <div class="auth-overlay" id="profileOverlay" onclick="closeProfile()"></div>
+    <div class="auth-modal" id="profileModal" role="dialog" aria-modal="true">
+        <button class="auth-close" onclick="closeProfile()" aria-label="Cerrar">✕</button>
+        <div class="auth-logo">
+            <div class="auth-logo-text">
+                <span class="auth-logo-human">HUMAN</span>
+                <span class="auth-logo-line"></span>
+                <span class="auth-logo-sport">SPORT</span>
+            </div>
+        </div>
+        <h3 style="font-family:'Montserrat',sans-serif;font-size:0.95rem;font-weight:800;margin-bottom:20px;text-align:center">Mis datos</h3>
+        <form class="auth-form" id="formProfile" onsubmit="submitProfile(event)">
+            <div class="auth-field">
+                <label>Nombre completo</label>
+                <input type="text" id="profileName" name="profile-name" required autocomplete="name">
+            </div>
+            <div class="auth-field">
+                <label>Email <span style="color:#555;font-weight:400">(no editable)</span></label>
+                <input type="email" id="profileEmail" disabled style="opacity:.45;cursor:not-allowed">
+            </div>
+            <div class="auth-field">
+                <label>Teléfono <span style="color:#666;font-weight:400">(opcional)</span></label>
+                <input type="tel" id="profilePhone" name="profile-phone" placeholder="+54 9 ...">
+            </div>
+            <div class="auth-error" id="profileError"></div>
+            <button type="submit" class="auth-submit" id="profileBtn">Guardar cambios</button>
+        </form>
     </div>
 
     <!-- FLOATING WHATSAPP -->

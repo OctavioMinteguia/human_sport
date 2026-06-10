@@ -67,6 +67,22 @@ class AuthController {
     } catch (err) { next(err); }
   }
 
+  async updateProfile(req, res, next) {
+    try {
+      const { name, phone } = req.body;
+      if (!name || !name.trim()) {
+        return res.status(400).json({ success: false, error: 'El nombre es requerido' });
+      }
+      await db('customers').where({ id: req.customerId }).update({
+        name: name.trim(),
+        phone: phone || null,
+        updated_at: db.fn.now()
+      });
+      const customer = await repo.findById(req.customerId);
+      res.json({ success: true, data: customer });
+    } catch (err) { next(err); }
+  }
+
   async getMyOrders(req, res, next) {
     try {
       const orders = await repo.getOrders(req.customerId);

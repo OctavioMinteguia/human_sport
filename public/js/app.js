@@ -146,9 +146,22 @@ function renderCart() {
 // ================================================
 // MERCADOPAGO CHECKOUT
 // ================================================
+let _pendingMpCheckout = false;
+
 async function checkoutMercadoPago() {
   if (cart.length === 0) return;
 
+  if (!currentUser) {
+    _pendingMpCheckout = true;
+    openAuthModal('login');
+    return;
+  }
+
+  await _doMpCheckout();
+}
+
+async function _doMpCheckout() {
+  _pendingMpCheckout = false;
   const btn = document.getElementById('btnMercadoPago');
   if (btn) { btn.disabled = true; btn.textContent = 'Procesando...'; }
 
@@ -310,13 +323,32 @@ function closeSizeModal() {
   pendingProduct = null; pendingSize = null; pendingColor = null; pendingQty = 1;
 }
 
+function showModalValidation(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = `<span style="font-size:1rem">⚠️</span> ${msg}`;
+  el.classList.remove('pop');
+  void el.offsetWidth; // reflow para reiniciar animación
+  el.classList.add('pop');
+  setTimeout(() => el.classList.remove('pop'), 300);
+}
+
 function confirmAddToCart() {
-  if (!pendingSize) {
-    const grid = document.getElementById('sizeGrid');
-    grid.classList.add('shake');
-    setTimeout(() => grid.classList.remove('shake'), 320);
+  const hasColors = (pendingProduct?.colors || []).length > 0;
+  const missing = [];
+  if (!pendingSize)              missing.push('talle');
+  if (hasColors && !pendingColor) missing.push('color');
+
+  if (missing.length) {
+    const msg = 'Seleccioná ' + missing.join(' y ');
+    showModalValidation('modalValidation', msg);
+    const shakeId = !pendingSize ? 'sizeGrid' : 'colorPicker';
+    const el = document.getElementById(shakeId);
+    el?.classList.add('shake');
+    setTimeout(() => el?.classList.remove('shake'), 320);
     return;
   }
+  document.getElementById('modalValidation').textContent = '';
   addToCart(pendingProduct, pendingSize, pendingColor, pendingQty);
   closeSizeModal();
 }
@@ -440,12 +472,21 @@ function changePdQty(delta) {
 }
 
 function confirmPdAddToCart() {
-  if (!pdSize) {
-    const grid = document.getElementById('pdSizeGrid');
-    grid.classList.add('shake');
-    setTimeout(() => grid.classList.remove('shake'), 320);
+  const hasColors = (pdProduct?.colors || []).length > 0;
+  const missing = [];
+  if (!pdSize)              missing.push('talle');
+  if (hasColors && !pdColor) missing.push('color');
+
+  if (missing.length) {
+    const msg = 'Seleccioná ' + missing.join(' y ');
+    showModalValidation('pdValidation', msg);
+    const shakeId = !pdSize ? 'pdSizeGrid' : 'pdColorPicker';
+    const el = document.getElementById(shakeId);
+    el?.classList.add('shake');
+    setTimeout(() => el?.classList.remove('shake'), 320);
     return;
   }
+  document.getElementById('pdValidation').textContent = '';
   addToCart(pdProduct, pdSize, pdColor, pdQty);
   closeProductDetail();
 }
@@ -843,12 +884,38 @@ function renderHeaderUser() {
   if (!el) return;
   if (currentUser) {
     el.innerHTML = `
-      <div class="btn-user-name"><i class="fas fa-user-circle"></i><span>${escHtml(currentUser.name.split(' ')[0])}</span></div>
-      <button class="btn-user-orders" onclick="openMyOrders()">Mis pedidos</button>
-      <button class="btn-user-logout" onclick="logoutUser()" title="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>`;
+      <div class="user-dropdown" id="userDropdown">
+        <button class="btn-user-name" onclick="toggleUserDropdown(event)">
+          <i class="fas fa-user-circle"></i>
+          <span>${escHtml(currentUser.name.split(' ')[0])}</span>
+          <i class="fas fa-chevron-down user-caret"></i>
+        </button>
+        <div class="user-dropdown-menu" id="userDropdownMenu">
+          <button class="user-dropdown-item" onclick="openProfile(); closeUserDropdown()">
+            <i class="fas fa-user-edit"></i> Mis datos
+          </button>
+          <button class="user-dropdown-item" onclick="openMyOrders(); closeUserDropdown()">
+            <i class="fas fa-box"></i> Mis pedidos
+          </button>
+          <div class="user-dropdown-sep"></div>
+          <button class="user-dropdown-item user-dropdown-item--danger" onclick="logoutUser()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+          </button>
+        </div>
+      </div>`;
   } else {
     el.innerHTML = `<button class="btn-login" onclick="openAuthModal('login')"><i class="fas fa-user"></i> Ingresar</button>`;
   }
+}
+
+function toggleUserDropdown(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('userDropdownMenu');
+  if (menu) menu.classList.toggle('open');
+}
+
+function closeUserDropdown() {
+  document.getElementById('userDropdownMenu')?.classList.remove('open');
 }
 
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -873,6 +940,24 @@ function switchAuthTab(tab) {
   document.getElementById('registerError').textContent = '';
 }
 
+function showAuthToast(name, isNew) {
+  const prev = document.getElementById('authToast');
+  if (prev) prev.remove();
+  const t = document.createElement('div');
+  t.id = 'authToast';
+  t.className = 'auth-toast';
+  const mainText = isNew
+    ? `¡Cuenta creada! Bienvenida, <strong>${escHtml(name.split(' ')[0])}</strong>`
+    : `¡Hola de nuevo, <strong>${escHtml(name.split(' ')[0])}</strong>!`;
+  t.innerHTML = `<span class="auth-toast-line"><i class="fas fa-check-circle"></i> ${mainText}</span>`;
+  if (_pendingMpCheckout) {
+    t.innerHTML += `<span class="auth-toast-sub">Redirigiendo al pago…</span>`;
+  }
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('visible'));
+  setTimeout(() => { t.classList.remove('visible'); setTimeout(() => t.remove(), 350); }, 2500);
+}
+
 async function submitLogin(e) {
   e.preventDefault();
   const btn = document.getElementById('loginBtn');
@@ -887,6 +972,8 @@ async function submitLogin(e) {
     saveSession(data.token, data.customer);
     renderHeaderUser();
     closeAuthModal();
+    showAuthToast(data.customer.name, false);
+    if (_pendingMpCheckout) setTimeout(_doMpCheckout, 1600);
   } catch (err) {
     errEl.textContent = err.message;
   } finally {
@@ -910,6 +997,8 @@ async function submitRegister(e) {
     saveSession(data.token, data.customer);
     renderHeaderUser();
     closeAuthModal();
+    showAuthToast(data.customer.name, true);
+    if (_pendingMpCheckout) setTimeout(_doMpCheckout, 1600);
   } catch (err) {
     errEl.textContent = err.message;
   } finally {
@@ -920,6 +1009,46 @@ async function submitRegister(e) {
 function logoutUser() {
   clearSession();
   renderHeaderUser();
+}
+
+// ================================================
+// PERFIL
+// ================================================
+function openProfile() {
+  if (!currentUser) return;
+  document.getElementById('profileName').value  = currentUser.name  || '';
+  document.getElementById('profileEmail').value = currentUser.email || '';
+  document.getElementById('profilePhone').value = currentUser.phone || '';
+  document.getElementById('profileError').textContent = '';
+  document.getElementById('profileOverlay').classList.add('open');
+  document.getElementById('profileModal').classList.add('open');
+}
+
+function closeProfile() {
+  document.getElementById('profileOverlay').classList.remove('open');
+  document.getElementById('profileModal').classList.remove('open');
+}
+
+async function submitProfile(e) {
+  e.preventDefault();
+  const btn   = document.getElementById('profileBtn');
+  const errEl = document.getElementById('profileError');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  errEl.textContent = '';
+  try {
+    const updated = await API.updateProfile({
+      name:  document.getElementById('profileName').value,
+      phone: document.getElementById('profilePhone').value
+    });
+    saveSession(localStorage.getItem('hs_token'), { ...currentUser, ...updated });
+    renderHeaderUser();
+    closeProfile();
+    showAuthToast(updated.name, false);
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Guardar cambios';
+  }
 }
 
 function initAuth() {
@@ -991,6 +1120,8 @@ async function loadMyOrders() {
 // ================================================
 // INIT
 // ================================================
+document.addEventListener('click', () => closeUserDropdown());
+
 document.addEventListener('DOMContentLoaded', async () => {
   initAuth();
   renderCart(); syncBadge();

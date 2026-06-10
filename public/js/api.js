@@ -43,7 +43,8 @@ const API = (() => {
     // Auth
     authRegister: (data)  => request('POST', '/auth/register', data),
     authLogin:    (data)  => request('POST', '/auth/login', data),
-    getMyProfile: ()      => request('GET',  '/auth/me',         null, true),
-    getMyOrders:  ()      => request('GET',  '/auth/my-orders',  null, true)
+    getMyProfile:  ()     => request('GET',   '/auth/me',        null, true),
+    updateProfile: (data) => request('PATCH', '/auth/profile',   data, true),
+    getMyOrders:   ()     => request('GET',   '/auth/my-orders', null, true)
   };
 })();

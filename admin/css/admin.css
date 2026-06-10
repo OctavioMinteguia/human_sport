@@ -118,6 +118,8 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .badge-nuevo   { background: rgba(212,129,42,0.15); color: var(--orange); }
 .badge-oferta  { background: rgba(239,68,68,0.12);  color: var(--red); }
 .badge-none    { background: var(--border); color: var(--muted); }
+.cell-stack { display: flex; flex-direction: column; gap: 2px; }
+.cell-sub   { font-size: 0.72rem; color: var(--muted); }
 .badge-pending    { background: rgba(234,179,8,0.12);  color: var(--yellow); }
 .badge-confirmed  { background: rgba(34,197,94,0.12);  color: var(--green); }
 .badge-delivered  { background: rgba(59,130,246,0.12); color: #60a5fa; }

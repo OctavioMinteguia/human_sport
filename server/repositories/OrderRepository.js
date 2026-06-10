@@ -2,8 +2,11 @@ const db = require('../config/database');
 
 class OrderRepository {
   async findAll({ status, limit = 50, offset = 0 } = {}) {
-    let query = db('orders').orderBy('created_at', 'desc').limit(limit).offset(offset);
-    if (status) query = query.where({ status });
+    let query = db('orders as o')
+      .leftJoin('customers as c', 'c.id', 'o.customer_id')
+      .select('o.*', 'c.phone as customer_phone')
+      .orderBy('o.created_at', 'desc').limit(limit).offset(offset);
+    if (status) query = query.where('o.status', status);
     return query;
   }
 

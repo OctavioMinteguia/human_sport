@@ -899,6 +899,8 @@ function renderOrdersTable(orders) {
           <th>#</th>
           <th>Fecha</th>
           <th>Cliente</th>
+          <th>Email</th>
+          <th>Teléfono</th>
           <th>Total</th>
           <th>Estado</th>
           <th>Pago</th>
@@ -915,6 +917,8 @@ function renderOrdersTable(orders) {
             <td>#${o.id}</td>
             <td>${date}</td>
             <td>${escHtml(o.customer_name || '—')}</td>
+            <td>${escHtml(o.customer_email || '—')}</td>
+            <td>${escHtml(o.customer_phone || '—')}</td>
             <td>${fmt(o.total)}</td>
             <td><span class="badge ${cls}">${label}</span></td>
             <td><span class="badge ${payBadge.cls}">${payBadge.label}</span></td>
