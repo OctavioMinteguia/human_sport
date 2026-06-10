@@ -25,6 +25,9 @@ const API = (() => {
     getProduct: (id) => request('GET', `/products/${id}`),
 
     // Pedidos (público — registra el checkout de WhatsApp)
-    createOrder: (data) => request('POST', '/orders', data)
+    createOrder: (data) => request('POST', '/orders', data),
+
+    // Más vendidos (público)
+    getBestsellers: () => request('GET', '/bestsellers')
   };
 })();

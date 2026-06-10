@@ -39,6 +39,10 @@
         <i class="fas fa-receipt"></i>
         <span>Pedidos</span>
       </a>
+      <a href="#" class="nav-item" data-section="bestsellers">
+        <i class="fas fa-fire"></i>
+        <span>Más Vendidos</span>
+      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -152,6 +156,19 @@
         </div>
       </div>
       <div class="table-wrap" id="stockTableWrap">
+        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+      </div>
+    </section>
+
+    <!-- ===== BESTSELLERS ===== -->
+    <section id="section-bestsellers" class="section">
+      <div class="section-header">
+        <h2>Más Vendidos</h2>
+        <button class="btn-primary" id="btnNewBestseller">
+          <i class="fas fa-plus"></i> Agregar
+        </button>
+      </div>
+      <div class="table-wrap" id="bsTableWrap">
         <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
       </div>
     </section>
@@ -334,6 +351,62 @@
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeOrderModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: BESTSELLER FORM ===== -->
+  <div class="modal-overlay" id="bestsellerModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="bsModalTitle">Nuevo Más Vendido</h3>
+        <button class="modal-close" onclick="closeBestsellerModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="bestsellerForm" autocomplete="off">
+          <input type="hidden" id="bsId">
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input type="text" id="bsName" required placeholder="Ej: Calza Push Up Deportiva">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Precio *</label>
+              <input type="number" id="bsPrice" required min="0" placeholder="15990">
+            </div>
+            <div class="form-group">
+              <label>Orden de aparición</label>
+              <input type="number" id="bsSortOrder" min="0" value="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Badge <small style="color:#888">(ej: 🔥 Top ventas · ⭐ Favorita · ✨ Nuevo)</small></label>
+            <input type="text" id="bsBadge" placeholder="Dejar vacío para no mostrar">
+          </div>
+          <div class="form-group">
+            <label>Estado</label>
+            <select id="bsIsActive">
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Imagen</label>
+            <div class="upload-zone" id="bsUploadZone" style="cursor:pointer">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Hacé clic para seleccionar imagen</p>
+              <span>JPG, PNG, WebP — máx. 5MB</span>
+              <input type="file" id="bsImageInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+            </div>
+            <div id="bsCurrentImage" style="margin-top:8px"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeBestsellerModal()">Cancelar</button>
+        <button class="btn-primary" id="saveBestsellerBtn" onclick="saveBestseller()">
+          <i class="fas fa-save"></i> Guardar
+        </button>
       </div>
     </div>
   </div>

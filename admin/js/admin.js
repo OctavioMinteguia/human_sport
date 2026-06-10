@@ -41,6 +41,12 @@ const ADMIN_API = (() => {
     setStock:    (id, size, qty) => request('PATCH', `/stock/${id}`, { size, quantity: qty }),
     getLowStock: () => request('GET', '/stock/alerts'),
 
+    // Bestsellers
+    getBestsellers:   () => request('GET', '/bestsellers'),
+    createBestseller: (fd) => request('POST', '/bestsellers', fd, true),
+    updateBestseller: (id, fd) => request('PUT', `/bestsellers/${id}`, fd, true),
+    deleteBestseller: (id) => request('DELETE', `/bestsellers/${id}`),
+
     // Orders
     getOrders:     (params = {}) => {
       const qs = new URLSearchParams(
@@ -97,17 +103,19 @@ function switchSection(name) {
     el.classList.toggle('active', el.id === 'section-' + name);
   });
   const titles = {
-    overview: 'Resumen',
-    products: 'Productos',
-    stock:    'Stock',
-    orders:   'Pedidos'
+    overview:    'Resumen',
+    products:    'Productos',
+    stock:       'Stock',
+    orders:      'Pedidos',
+    bestsellers: 'Más Vendidos'
   };
   document.getElementById('topbarTitle').textContent = titles[name] || name;
 
-  if (name === 'overview') loadOverview();
-  if (name === 'products') loadProducts();
-  if (name === 'stock')    loadStockTable();
-  if (name === 'orders')   loadOrders();
+  if (name === 'overview')    loadOverview();
+  if (name === 'products')    loadProducts();
+  if (name === 'stock')       loadStockTable();
+  if (name === 'orders')      loadOrders();
+  if (name === 'bestsellers') loadBestsellersList();
 
   // Close sidebar on mobile
   document.getElementById('sidebar').classList.remove('open');
@@ -712,6 +720,147 @@ async function setStockUI(productId, size, qty) {
 }
 
 // ================================================
+// BESTSELLERS
+// ================================================
+let _bestsellers = [];
+
+async function loadBestsellersList() {
+  const wrap = document.getElementById('bsTableWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>';
+  try {
+    _bestsellers = await ADMIN_API.getBestsellers();
+    renderBestsellersList();
+  } catch (e) {
+    wrap.innerHTML = `<p class="empty-msg error">${escHtml(e.message)}</p>`;
+  }
+}
+
+function renderBestsellersList() {
+  const wrap = document.getElementById('bsTableWrap');
+  if (!_bestsellers.length) {
+    wrap.innerHTML = '<p class="empty-msg">Sin items. ¡Agregá el primero!</p>';
+    return;
+  }
+  wrap.innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Foto</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Badge</th>
+          <th>Orden</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${_bestsellers.map(b => {
+          const thumb = b.image_url
+            ? `<img src="${escHtml(b.image_url)}" class="prod-thumb" alt="">`
+            : `<div class="prod-thumb-placeholder"><i class="fas fa-image"></i></div>`;
+          return `<tr>
+            <td>${thumb}</td>
+            <td><strong>${escHtml(b.name)}</strong></td>
+            <td>${fmt(b.price)}</td>
+            <td>${escHtml(b.badge || '—')}</td>
+            <td>${b.sort_order}</td>
+            <td><span class="badge ${b.is_active ? 'badge-delivered' : 'badge-cancelled'}">${b.is_active ? 'Activo' : 'Inactivo'}</span></td>
+            <td class="actions-cell">
+              <button class="btn-icon" onclick="openEditBestseller(${b.id})" title="Editar"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon btn-danger" onclick="confirmDeleteBestseller(${b.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+function openNewBestseller() {
+  document.getElementById('bsId').value         = '';
+  document.getElementById('bsName').value       = '';
+  document.getElementById('bsPrice').value      = '';
+  document.getElementById('bsBadge').value      = '';
+  document.getElementById('bsSortOrder').value  = '0';
+  document.getElementById('bsIsActive').value   = 'true';
+  document.getElementById('bsCurrentImage').innerHTML = '';
+  document.getElementById('bsImageInput').value = '';
+  document.getElementById('bsModalTitle').textContent = 'Nuevo Más Vendido';
+  document.getElementById('bestsellerModal').classList.add('open');
+}
+
+function openEditBestseller(id) {
+  const b = _bestsellers.find(x => x.id === id);
+  if (!b) return;
+  document.getElementById('bsId').value        = b.id;
+  document.getElementById('bsName').value      = b.name;
+  document.getElementById('bsPrice').value     = b.price;
+  document.getElementById('bsBadge').value     = b.badge || '';
+  document.getElementById('bsSortOrder').value = b.sort_order || 0;
+  document.getElementById('bsIsActive').value  = b.is_active ? 'true' : 'false';
+  document.getElementById('bsImageInput').value = '';
+  document.getElementById('bsCurrentImage').innerHTML = b.image_url
+    ? `<img src="${escHtml(b.image_url)}" style="width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid #252525">`
+    : '';
+  document.getElementById('bsModalTitle').textContent = 'Editar Más Vendido';
+  document.getElementById('bestsellerModal').classList.add('open');
+}
+
+function closeBestsellerModal() {
+  document.getElementById('bestsellerModal').classList.remove('open');
+  document.getElementById('bsImageInput').value = '';
+}
+
+async function saveBestseller() {
+  const id    = document.getElementById('bsId').value;
+  const name  = document.getElementById('bsName').value.trim();
+  const price = document.getElementById('bsPrice').value;
+  if (!name || !price) { showToast('Completá nombre y precio', 'error'); return; }
+
+  const fd = new FormData();
+  fd.append('name',       name);
+  fd.append('price',      price);
+  fd.append('badge',      document.getElementById('bsBadge').value.trim());
+  fd.append('sort_order', document.getElementById('bsSortOrder').value || '0');
+  fd.append('is_active',  document.getElementById('bsIsActive').value);
+  const file = document.getElementById('bsImageInput').files[0];
+  if (file) fd.append('image', file);
+
+  const btn = document.getElementById('saveBestsellerBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+  try {
+    if (id) {
+      await ADMIN_API.updateBestseller(id, fd);
+      showToast('Actualizado');
+    } else {
+      await ADMIN_API.createBestseller(fd);
+      showToast('Creado');
+    }
+    closeBestsellerModal();
+    loadBestsellersList();
+  } catch (e) {
+    showToast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-save"></i> Guardar';
+  }
+}
+
+async function confirmDeleteBestseller(id) {
+  const b = _bestsellers.find(x => x.id === id);
+  if (!confirm(`¿Eliminar "${b?.name || id}"? Esta acción no se puede deshacer.`)) return;
+  try {
+    await ADMIN_API.deleteBestseller(id);
+    showToast('Eliminado');
+    loadBestsellersList();
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+// ================================================
 // ORDERS
 // ================================================
 async function loadOrders() {
@@ -890,8 +1039,8 @@ async function init() {
   document.getElementById('btnNewProduct').addEventListener('click', openNewProduct);
 
   // Modal close on overlay click
-  ['productModal', 'imagesModal', 'orderModal'].forEach(id => {
-    document.getElementById(id).addEventListener('click', e => {
+  ['productModal', 'imagesModal', 'orderModal', 'bestsellerModal'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
       if (e.target.id === id) e.target.classList.remove('open');
     });
   });
@@ -899,6 +1048,21 @@ async function init() {
   // Upload zones
   initUploadZone();
   initProdUploadZone();
+
+  // Bestsellers section
+  document.getElementById('btnNewBestseller')?.addEventListener('click', openNewBestseller);
+  const bsUploadZone  = document.getElementById('bsUploadZone');
+  const bsImageInput  = document.getElementById('bsImageInput');
+  if (bsUploadZone && bsImageInput) {
+    bsUploadZone.addEventListener('click', () => bsImageInput.click());
+    bsImageInput.addEventListener('change', () => {
+      const f = bsImageInput.files[0];
+      if (f) {
+        document.getElementById('bsCurrentImage').innerHTML =
+          `<img src="${URL.createObjectURL(f)}" style="width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid #252525">`;
+      }
+    });
+  }
 
   // Load initial view
   loadOverview();

@@ -3,9 +3,10 @@ const express  = require('express');
 const cors     = require('cors');
 const path     = require('path');
 
-const productRoutes = require('./routes/products');
-const orderRoutes   = require('./routes/orders');
-const adminRoutes   = require('./routes/admin');
+const productRoutes     = require('./routes/products');
+const orderRoutes       = require('./routes/orders');
+const adminRoutes       = require('./routes/admin');
+const bestsellerRoutes  = require('./routes/bestsellers');
 const AppError      = require('./utils/AppError');
 
 const app = express();
@@ -21,9 +22,10 @@ app.use('/admin', express.static(path.join(__dirname, '../admin')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // ── API Routes ────────────────────────────────────────────────────────────────
-app.use('/api/products', productRoutes);
-app.use('/api/orders',   orderRoutes);
-app.use('/api/admin',    adminRoutes);
+app.use('/api/products',     productRoutes);
+app.use('/api/orders',      orderRoutes);
+app.use('/api/admin',       adminRoutes);
+app.use('/api/bestsellers', bestsellerRoutes);
 
 // ── SPA fallbacks ─────────────────────────────────────────────────────────────
 app.get('/admin/*', (req, res) => {

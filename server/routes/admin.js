@@ -1,10 +1,11 @@
-const router       = require('express').Router();
-const { requireAuth } = require('../middleware/auth');
-const { upload }      = require('../middleware/upload');
-const productCtrl  = require('../controllers/ProductController');
-const stockCtrl    = require('../controllers/StockController');
-const orderCtrl    = require('../controllers/OrderController');
-const adminCtrl    = require('../controllers/AdminController');
+const router            = require('express').Router();
+const { requireAuth }   = require('../middleware/auth');
+const { upload }        = require('../middleware/upload');
+const productCtrl       = require('../controllers/ProductController');
+const stockCtrl         = require('../controllers/StockController');
+const orderCtrl         = require('../controllers/OrderController');
+const adminCtrl         = require('../controllers/AdminController');
+const bestsellerCtrl    = require('../controllers/BestsellerController');
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 router.post('/auth/login',           adminCtrl.login.bind(adminCtrl));
@@ -37,5 +38,11 @@ router.get(  '/orders',            requireAuth, orderCtrl.list.bind(orderCtrl));
 router.get(  '/orders/stats',      requireAuth, orderCtrl.getStats.bind(orderCtrl));
 router.get(  '/orders/:id',        requireAuth, orderCtrl.getOne.bind(orderCtrl));
 router.patch('/orders/:id/status', requireAuth, orderCtrl.updateStatus.bind(orderCtrl));
+
+// ── Bestsellers ───────────────────────────────────────────────────────────────
+router.get(   '/bestsellers',      requireAuth, bestsellerCtrl.listAdmin.bind(bestsellerCtrl));
+router.post(  '/bestsellers',      requireAuth, upload.single('image'), bestsellerCtrl.create.bind(bestsellerCtrl));
+router.put(   '/bestsellers/:id',  requireAuth, upload.single('image'), bestsellerCtrl.update.bind(bestsellerCtrl));
+router.delete('/bestsellers/:id',  requireAuth, bestsellerCtrl.remove.bind(bestsellerCtrl));
 
 module.exports = router;
