@@ -8,6 +8,7 @@ const orderRoutes       = require('./routes/orders');
 const adminRoutes       = require('./routes/admin');
 const bestsellerRoutes  = require('./routes/bestsellers');
 const checkoutRoutes    = require('./routes/checkout');
+const authRoutes        = require('./routes/auth');
 const AppError          = require('./utils/AppError');
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/admin',       adminRoutes);
 app.use('/api/bestsellers', bestsellerRoutes);
 app.use('/api/checkout',    checkoutRoutes);
 app.use('/api/webhook',     checkoutRoutes);
+app.use('/api/auth',        authRoutes);
 
 // ── Páginas de pago (antes del catch-all) ────────────────────────────────────
 app.get('/pago/exito',     (req, res) => res.sendFile(path.join(__dirname, '../public/pago/exito.html')));

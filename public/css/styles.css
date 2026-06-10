@@ -929,6 +929,126 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 .btn-clear:hover { color: #c0392b; }
 
 /* ================================
+   HEADER USER
+================================ */
+.header-user { display: flex; align-items: center; gap: 6px; }
+.btn-login {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; background: transparent;
+    border: 1px solid #333; border-radius: 20px;
+    color: var(--text); font-size: 0.78rem; font-weight: 600;
+    transition: var(--ease); white-space: nowrap;
+}
+.btn-login:hover { border-color: var(--accent); color: var(--accent); }
+.btn-user-name {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; background: #1a1a1a; border-radius: 20px;
+    color: var(--text); font-size: 0.78rem; font-weight: 600;
+    border: 1px solid #2a2a2a; white-space: nowrap; max-width: 130px; overflow: hidden;
+}
+.btn-user-name span { overflow: hidden; text-overflow: ellipsis; }
+.btn-user-orders {
+    padding: 6px 10px; background: transparent; border: 1px solid #333;
+    border-radius: 20px; color: #888; font-size: 0.72rem; transition: var(--ease);
+}
+.btn-user-orders:hover { border-color: var(--accent); color: var(--accent); }
+.btn-user-logout {
+    padding: 6px 10px; background: transparent; border: none;
+    color: #555; font-size: 0.72rem; transition: var(--ease);
+}
+.btn-user-logout:hover { color: #c0392b; }
+
+/* ================================
+   AUTH MODAL
+================================ */
+.auth-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.75);
+    z-index: 1100; opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.auth-overlay.open { opacity: 1; pointer-events: all; }
+.auth-modal {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -55%) scale(.97);
+    z-index: 1101; width: 90%; max-width: 420px;
+    background: #111; border: 1px solid #252525; border-radius: 16px;
+    padding: 36px 32px; opacity: 0; pointer-events: none;
+    transition: opacity .25s, transform .25s;
+}
+.auth-modal.open { opacity: 1; pointer-events: all; transform: translate(-50%, -50%) scale(1); }
+.auth-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; color: #555; font-size: 1.1rem;
+    cursor: pointer; transition: color .2s;
+}
+.auth-close:hover { color: #fff; }
+.auth-logo { text-align: center; margin-bottom: 20px; }
+.auth-logo img { height: 40px; }
+.auth-tabs { display: flex; border-bottom: 1px solid #252525; margin-bottom: 24px; }
+.auth-tab {
+    flex: 1; padding: 10px; background: none; border: none;
+    color: #555; font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem; font-weight: 700; letter-spacing: .5px;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s; margin-bottom: -1px;
+}
+.auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-form--hidden { display: none; }
+.auth-field { display: flex; flex-direction: column; gap: 5px; }
+.auth-field label { font-size: 0.75rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .5px; }
+.auth-field input {
+    padding: 11px 14px; background: #1a1a1a; border: 1px solid #2a2a2a;
+    border-radius: 8px; color: #fff; font-size: 0.9rem;
+    transition: border-color .2s;
+}
+.auth-field input:focus { outline: none; border-color: var(--accent); }
+.auth-error { color: #e74c3c; font-size: 0.8rem; min-height: 18px; }
+.auth-submit {
+    padding: 13px; background: var(--accent); color: #fff;
+    border-radius: 8px; font-family: 'Montserrat', sans-serif;
+    font-weight: 800; font-size: 0.85rem; letter-spacing: 1px;
+    text-transform: uppercase; transition: var(--ease); margin-top: 4px;
+}
+.auth-submit:hover { background: #b86a1f; transform: translateY(-1px); }
+.auth-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.auth-switch { text-align: center; font-size: 0.8rem; color: #666; }
+.auth-switch a { color: var(--accent); cursor: pointer; font-weight: 600; }
+.auth-loading { text-align: center; padding: 40px; color: #555; font-size: 1.4rem; }
+
+/* MIS PEDIDOS MODAL */
+.orders-modal {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -55%) scale(.97);
+    z-index: 1101; width: 92%; max-width: 580px; max-height: 80vh;
+    background: #111; border: 1px solid #252525; border-radius: 16px;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+}
+.orders-modal.open { opacity: 1; pointer-events: all; transform: translate(-50%, -50%) scale(1); }
+.orders-modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px; border-bottom: 1px solid #1e1e1e;
+}
+.orders-modal-head h3 { font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 800; }
+.orders-modal-body { overflow-y: auto; padding: 20px 24px; flex: 1; }
+.order-card {
+    background: #181818; border: 1px solid #222; border-radius: 10px;
+    padding: 16px; margin-bottom: 12px;
+}
+.order-card-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+}
+.order-card-id { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.85rem; }
+.order-card-date { color: #555; font-size: 0.75rem; }
+.order-card-items { font-size: 0.82rem; color: #888; line-height: 1.6; }
+.order-card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e1e1e;
+}
+.order-card-total { font-family: 'Montserrat', sans-serif; font-weight: 900; color: var(--accent); }
+.orders-empty { text-align: center; padding: 40px 20px; color: #555; }
+.orders-empty i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+
+/* ================================
    FLOATING WHATSAPP
 ================================ */
 .float-wa {

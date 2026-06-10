@@ -1,5 +1,6 @@
 const db  = require('../config/database');
 const mp  = require('../config/mercadopago');
+const jwt = require('jsonwebtoken');
 
 class CheckoutController {
 
@@ -13,12 +14,31 @@ class CheckoutController {
       const total = items.reduce((s, i) => s + parseFloat(i.price) * parseInt(i.qty), 0);
       const baseUrl = process.env.BASE_URL || 'http://localhost:3001';
 
+      // Leer customer del JWT si está logueado
+      let customerId = null;
+      let customerEmail = null;
+      let customerName = null;
+      const header = req.headers['authorization'] || '';
+      const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
+      if (token) {
+        try {
+          const payload = jwt.verify(token, process.env.JWT_SECRET);
+          customerId = payload.id;
+          customerEmail = payload.email;
+          const c = await db('customers').where({ id: customerId }).select('name', 'email', 'phone').first();
+          if (c) { customerName = c.name; customerEmail = c.email; }
+        } catch {}
+      }
+
       // Crear orden en DB antes de ir a MP
       const [orderId] = await db('orders').insert({
         total,
         status:         'pending',
         payment_status: 'pending',
-        whatsapp_sent:  false
+        whatsapp_sent:  false,
+        customer_id:    customerId,
+        customer_name:  customerName,
+        customer_email: customerEmail
       });
 
       await db('order_items').insert(
@@ -50,7 +70,8 @@ class CheckoutController {
             failure: `${baseUrl}/pago/error`,
             pending: `${baseUrl}/pago/pendiente`
           },
-          auto_return:      'approved',
+          // auto_return solo funciona con URLs públicas (no localhost)
+          ...(baseUrl.startsWith('http://localhost') ? {} : { auto_return: 'approved' }),
           notification_url: `${baseUrl}/api/webhook/mercadopago`,
           statement_descriptor: 'Human Sport'
         }

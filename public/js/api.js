@@ -5,8 +5,15 @@
 const API = (() => {
   const BASE = '/api';
 
-  async function request(method, path, body) {
-    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  function getToken() { return localStorage.getItem('hs_token') || null; }
+
+  async function request(method, path, body, withAuth = false) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (withAuth) {
+      const t = getToken();
+      if (t) headers['Authorization'] = 'Bearer ' + t;
+    }
+    const opts = { method, headers };
     if (body) opts.body = JSON.stringify(body);
     const res = await fetch(BASE + path, opts);
     const json = await res.json().catch(() => ({ success: false, error: res.statusText }));
@@ -30,7 +37,13 @@ const API = (() => {
     // Más vendidos (público)
     getBestsellers: () => request('GET', '/bestsellers'),
 
-    // Checkout MercadoPago
-    createPreference: (cartItems) => request('POST', '/checkout', { items: cartItems })
+    // Checkout MercadoPago (envía token si está logueado)
+    createPreference: (cartItems) => request('POST', '/checkout', { items: cartItems }, true),
+
+    // Auth
+    authRegister: (data)  => request('POST', '/auth/register', data),
+    authLogin:    (data)  => request('POST', '/auth/login', data),
+    getMyProfile: ()      => request('GET',  '/auth/me',         null, true),
+    getMyOrders:  ()      => request('GET',  '/auth/my-orders',  null, true)
   };
 })();

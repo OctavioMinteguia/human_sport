@@ -175,7 +175,7 @@ function renderRecentOrders(orders) {
       <tbody>
         ${orders.slice(0, 5).map(o => {
           const { label, cls } = statusLabel(o.status);
-          const date = new Date(o.created_at).toLocaleDateString('es-AR');
+          const date = new Date(o.created_at).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
           return `<tr>
             <td>#${o.id}</td>
             <td>${date}</td>
@@ -909,7 +909,7 @@ function renderOrdersTable(orders) {
       <tbody>
         ${orders.map(o => {
           const { label, cls } = statusLabel(o.status);
-          const date = new Date(o.created_at).toLocaleDateString('es-AR');
+          const date = new Date(o.created_at).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
           const payBadge = paymentBadge(o.payment_status);
           return `<tr>
             <td>#${o.id}</td>
@@ -960,7 +960,7 @@ async function openOrderModal(id) {
   try {
     const o = await ADMIN_API.getOrder(id);
     const { label, cls } = statusLabel(o.status);
-    const date = new Date(o.created_at).toLocaleString('es-AR');
+    const date = new Date(o.created_at).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
     document.getElementById('orderModalBody').innerHTML = `
       <div class="order-detail">
         <div class="order-meta">

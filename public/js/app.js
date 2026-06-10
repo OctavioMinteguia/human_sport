@@ -817,9 +817,182 @@ function initSmoothScroll() {
 }
 
 // ================================================
+// AUTH
+// ================================================
+let currentUser = null;
+
+function getStoredToken() { return localStorage.getItem('hs_token'); }
+function getStoredUser()  {
+  try { return JSON.parse(localStorage.getItem('hs_user')); } catch { return null; }
+}
+
+function saveSession(token, user) {
+  localStorage.setItem('hs_token', token);
+  localStorage.setItem('hs_user', JSON.stringify(user));
+  currentUser = user;
+}
+
+function clearSession() {
+  localStorage.removeItem('hs_token');
+  localStorage.removeItem('hs_user');
+  currentUser = null;
+}
+
+function renderHeaderUser() {
+  const el = document.getElementById('headerUser');
+  if (!el) return;
+  if (currentUser) {
+    el.innerHTML = `
+      <div class="btn-user-name"><i class="fas fa-user-circle"></i><span>${escHtml(currentUser.name.split(' ')[0])}</span></div>
+      <button class="btn-user-orders" onclick="openMyOrders()">Mis pedidos</button>
+      <button class="btn-user-logout" onclick="logoutUser()" title="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>`;
+  } else {
+    el.innerHTML = `<button class="btn-login" onclick="openAuthModal('login')"><i class="fas fa-user"></i> Ingresar</button>`;
+  }
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function openAuthModal(tab = 'login') {
+  switchAuthTab(tab);
+  document.getElementById('authOverlay').classList.add('open');
+  document.getElementById('authModal').classList.add('open');
+}
+
+function closeAuthModal() {
+  document.getElementById('authOverlay').classList.remove('open');
+  document.getElementById('authModal').classList.remove('open');
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+  document.getElementById('formLogin').classList.toggle('auth-form--hidden', tab !== 'login');
+  document.getElementById('formRegister').classList.toggle('auth-form--hidden', tab !== 'register');
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('registerError').textContent = '';
+}
+
+async function submitLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  btn.disabled = true; btn.textContent = 'Ingresando...';
+  errEl.textContent = '';
+  try {
+    const data = await API.authLogin({
+      email:    document.getElementById('loginEmail').value,
+      password: document.getElementById('loginPassword').value
+    });
+    saveSession(data.token, data.customer);
+    renderHeaderUser();
+    closeAuthModal();
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Ingresar';
+  }
+}
+
+async function submitRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById('registerBtn');
+  const errEl = document.getElementById('registerError');
+  btn.disabled = true; btn.textContent = 'Creando cuenta...';
+  errEl.textContent = '';
+  try {
+    const data = await API.authRegister({
+      name:     document.getElementById('regName').value,
+      email:    document.getElementById('regEmail').value,
+      password: document.getElementById('regPassword').value,
+      phone:    document.getElementById('regPhone').value
+    });
+    saveSession(data.token, data.customer);
+    renderHeaderUser();
+    closeAuthModal();
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Crear cuenta';
+  }
+}
+
+function logoutUser() {
+  clearSession();
+  renderHeaderUser();
+}
+
+function initAuth() {
+  const token = getStoredToken();
+  const user  = getStoredUser();
+  if (token && user) {
+    currentUser = user;
+    // Verificar token en background
+    API.getMyProfile().catch(() => { clearSession(); renderHeaderUser(); });
+  }
+  renderHeaderUser();
+}
+
+// ================================================
+// MIS PEDIDOS
+// ================================================
+const AR_TZ = 'America/Argentina/Buenos_Aires';
+
+function fmtDate(dateStr) {
+  return new Date(dateStr).toLocaleString('es-AR', {
+    timeZone: AR_TZ, day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function openMyOrders() {
+  document.getElementById('ordersOverlay').classList.add('open');
+  document.getElementById('ordersModal').classList.add('open');
+  loadMyOrders();
+}
+
+function closeMyOrders() {
+  document.getElementById('ordersOverlay').classList.remove('open');
+  document.getElementById('ordersModal').classList.remove('open');
+}
+
+async function loadMyOrders() {
+  const body = document.getElementById('ordersModalBody');
+  body.innerHTML = '<div class="auth-loading"><i class="fas fa-spinner fa-spin"></i></div>';
+  try {
+    const orders = await API.getMyOrders();
+    if (!orders.length) {
+      body.innerHTML = `<div class="orders-empty"><i class="fas fa-box-open"></i><p>Todavía no hiciste ningún pedido.</p></div>`;
+      return;
+    }
+    const statusMap = {
+      pending: 'Pendiente', confirmed: 'Confirmado',
+      preparing: 'Preparando', delivered: 'Entregado', cancelled: 'Cancelado'
+    };
+    body.innerHTML = orders.map(o => `
+      <div class="order-card">
+        <div class="order-card-head">
+          <span class="order-card-id">Pedido #${o.id}</span>
+          <span class="order-card-date">${fmtDate(o.created_at)}</span>
+          <span class="badge badge-${o.status || 'pending'}">${statusMap[o.status] || o.status}</span>
+        </div>
+        <div class="order-card-items">
+          ${o.items.map(i => `${escHtml(i.product_name)} — Talle ${i.size} × ${i.quantity}`).join('<br>')}
+        </div>
+        <div class="order-card-foot">
+          <span class="order-card-total">${fmt(o.total)}</span>
+        </div>
+      </div>`).join('');
+  } catch (err) {
+    body.innerHTML = `<div class="orders-empty"><p style="color:#e74c3c">${err.message}</p></div>`;
+  }
+}
+
+// ================================================
 // INIT
 // ================================================
 document.addEventListener('DOMContentLoaded', async () => {
+  initAuth();
   renderCart(); syncBadge();
   initSlider(); initFilters(); initCategoryCards();
   initMobileMenu(); initStickyHeader();
