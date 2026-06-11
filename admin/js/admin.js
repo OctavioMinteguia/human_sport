@@ -175,10 +175,13 @@ function renderRecentOrders(orders) {
       <tbody>
         ${orders.slice(0, 5).map(o => {
           const { label, cls } = statusLabel(o.status);
-          const date = new Date(o.created_at).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+          const d = new Date(o.created_at);
+          const tz = { timeZone: 'America/Argentina/Buenos_Aires' };
+          const datePart = d.toLocaleDateString('es-AR', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric' });
+          const timePart = d.toLocaleTimeString('es-AR', { ...tz, hour: '2-digit', minute: '2-digit' });
           return `<tr>
             <td>#${o.id}</td>
-            <td>${date}</td>
+            <td><div class="cell-stack">${datePart}<span class="cell-sub">${timePart}</span></div></td>
             <td>${fmt(o.total)}</td>
             <td><span class="badge ${cls}">${label}</span></td>
             <td><button class="btn-icon" onclick="openOrderModal(${o.id})" title="Ver"><i class="fas fa-eye"></i></button></td>
@@ -911,11 +914,14 @@ function renderOrdersTable(orders) {
       <tbody>
         ${orders.map(o => {
           const { label, cls } = statusLabel(o.status);
-          const date = new Date(o.created_at).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+          const d = new Date(o.created_at);
+          const tz = { timeZone: 'America/Argentina/Buenos_Aires' };
+          const datePart = d.toLocaleDateString('es-AR', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric' });
+          const timePart = d.toLocaleTimeString('es-AR', { ...tz, hour: '2-digit', minute: '2-digit' });
           const payBadge = paymentBadge(o.payment_status);
           return `<tr>
             <td>#${o.id}</td>
-            <td>${date}</td>
+            <td><div class="cell-stack">${datePart}<span class="cell-sub">${timePart}</span></div></td>
             <td>${escHtml(o.customer_name || '—')}</td>
             <td>${escHtml(o.customer_email || '—')}</td>
             <td>${escHtml(o.customer_phone || '—')}</td>
