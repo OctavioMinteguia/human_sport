@@ -363,6 +363,7 @@ function openProductDetail(id) {
   const product = window.__products?.find(p => p.id === id);
   if (!product) return;
   pdProduct = product; pdSize = null; pdColor = null; pdQty = 1;
+  history.pushState({ productId: id }, '', '?p=' + id);
 
   // Badge
   document.getElementById('pdBadgeRow').innerHTML = product.badge
@@ -445,6 +446,7 @@ function closeProductDetail() {
   document.getElementById('productDetailModal').classList.remove('open');
   document.body.style.overflow = '';
   pdProduct = null; pdSize = null; pdColor = null; pdQty = 1;
+  if (location.search.includes('p=')) history.pushState({}, '', '/');
 }
 
 function setPdImage(url, btn) {
@@ -1138,6 +1140,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   observeElements(); initNewsletter(); initSmoothScroll();
 
   await Promise.all([loadProducts(), loadBestsellers()]);
+
+  // Abrir producto si la URL tiene ?p=ID (link compartido)
+  const pid = new URLSearchParams(location.search).get('p');
+  if (pid) openProductDetail(Number(pid));
+
+  // Botón Atrás del navegador cierra el modal
+  window.addEventListener('popstate', () => {
+    if (!location.search.includes('p=')) closeProductDetail();
+  });
 
   document.getElementById('cartBtn')?.addEventListener('click', openCart);
   document.getElementById('cartClose')?.addEventListener('click', closeCart);

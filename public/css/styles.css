@@ -491,12 +491,14 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
     to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 .modal-close {
-    position: absolute; top: 14px; right: 14px;
-    width: 30px; height: 30px; background: var(--border);
+    position: absolute; top: 14px; right: 14px; z-index: 10;
+    width: 34px; height: 34px; background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    color: var(--text); font-size: 0.85rem; transition: var(--ease);
+    color: var(--text); font-size: 0.9rem; transition: var(--ease);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
-.modal-close:hover { background: var(--orange); color: #fff; }
+.modal-close:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
 .modal-prod-info {
     display: flex; align-items: center; gap: 14px;
     padding-bottom: 18px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
