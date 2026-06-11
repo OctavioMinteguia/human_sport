@@ -537,9 +537,14 @@ function buildProductCard(p) {
         ${hasDiscount ? `<span class="price-was">${fmt(p.original_price)}</span>` : ''}
         ${hasDiscount ? `<span class="price-disc">-${discount(p.price, p.original_price)}%</span>` : ''}
       </div>
-      <button class="btn-cart" onclick="openSizeModal(${p.id})">
-        <i class="fas fa-plus"></i> Agregar al carrito
-      </button>
+      <div class="prod-actions">
+        <button class="btn-cart-icon" onclick="openSizeModal(${p.id})" aria-label="Agregar al carrito">
+          <i class="fas fa-shopping-bag"></i>
+        </button>
+        <button class="btn-detail" onclick="openProductDetail(${p.id})">
+          Ver detalle
+        </button>
+      </div>
     </div>
   </article>`;
 }

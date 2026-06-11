@@ -461,16 +461,29 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 .price-was  { font-size: 0.8rem; color: var(--muted); text-decoration: line-through; }
 .price-disc { font-size: 0.7rem; color: #e74c3c; font-weight: 700; }
 
-.btn-cart {
-    width: 100%; padding: 11px;
+.prod-actions {
+    display: flex; gap: 8px; margin-top: 4px;
+}
+.btn-cart-icon {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
     background: var(--orange-g);
     border: 1px solid rgba(212,129,42,0.35);
     color: var(--orange); border-radius: var(--r);
-    font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-    transition: var(--ease);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; transition: var(--ease);
 }
-.btn-cart:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+.btn-cart-icon:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+.btn-detail {
+    flex: 1; padding: 0 10px; height: 40px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text); border-radius: var(--r);
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--ease); white-space: nowrap;
+}
+.btn-detail:hover { border-color: var(--orange); color: var(--orange); }
 
 /* ================================
    SIZE MODAL
