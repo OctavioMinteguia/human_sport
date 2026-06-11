@@ -17,7 +17,7 @@ class OrderRepository {
       .where('oi.order_id', id)
       .select(
         'oi.*',
-        db.raw('(SELECT url FROM product_images WHERE product_id = oi.product_id AND is_primary = 1 LIMIT 1) as product_image')
+        db.raw('(SELECT url FROM product_images WHERE product_id = oi.product_id ORDER BY is_primary DESC, sort_order ASC, id ASC LIMIT 1) as product_image')
       );
     return { ...order, items };
   }
