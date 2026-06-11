@@ -1127,8 +1127,9 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 .info-section { margin-bottom: 20px; }
 .info-section h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--orange); text-transform: uppercase; letter-spacing: 0.5px; }
 .info-section p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; }
-.info-list { padding-left: 18px; }
-.info-list li { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 4px; }
+.info-list { padding-left: 0; list-style: none; }
+.info-list li { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 6px; padding-left: 14px; position: relative; }
+.info-list li::before { content: '→'; position: absolute; left: 0; color: var(--orange); font-size: 0.75rem; top: 2px; }
 .info-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
 .info-table th { background: var(--orange); color: #fff; padding: 10px 14px; text-align: center; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.5px; }
 .info-table td { padding: 10px 14px; text-align: center; border-bottom: 1px solid var(--border); color: var(--text-muted); }

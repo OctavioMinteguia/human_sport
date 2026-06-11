@@ -1208,7 +1208,7 @@ const INFO_CONTENT = {
       </div>
       <div class="faq-item">
         <div class="faq-q">¿Cuánto tarda el envío?</div>
-        <div class="faq-a">Entre 3 y 7 días hábiles dependiendo la localidad. Para el interior del país puede demorar un poco más.</div>
+        <div class="faq-a">Entre 5 y 10 días hábiles según la localidad. Enviamos desde Chivilcoy, Buenos Aires, por lo que los tiempos pueden variar para CABA y GBA.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">¿Cómo puedo pagar?</div>
