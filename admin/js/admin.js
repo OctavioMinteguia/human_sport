@@ -56,7 +56,8 @@ const ADMIN_API = (() => {
     },
     getOrderStats: () => request('GET', '/orders/stats'),
     getOrder:      (id) => request('GET', `/orders/${id}`),
-    updateStatus:  (id, status) => request('PATCH', `/orders/${id}/status`, { status })
+    updateStatus:  (id, status) => request('PATCH', `/orders/${id}/status`, { status }),
+    deleteOrder:   (id) => request('DELETE', `/orders/${id}`)
   };
 })();
 
@@ -908,7 +909,7 @@ function renderOrdersTable(orders) {
           <th>Estado</th>
           <th>Pago</th>
           <th>Cambiar estado</th>
-          <th>Ver</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -919,8 +920,11 @@ function renderOrdersTable(orders) {
           const datePart = d.toLocaleDateString('es-AR', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric' });
           const timePart = d.toLocaleTimeString('es-AR', { ...tz, hour: '2-digit', minute: '2-digit' });
           const payBadge = paymentBadge(o.payment_status);
+          const srcBadge = o.whatsapp_sent
+            ? `<span class="badge badge-whatsapp" style="font-size:0.6rem;padding:1px 6px">WA</span>`
+            : `<span class="badge badge-web" style="font-size:0.6rem;padding:1px 6px">Web</span>`;
           return `<tr>
-            <td>#${o.id}</td>
+            <td><div class="cell-stack">#${o.id}${srcBadge}</div></td>
             <td><div class="cell-stack">${datePart}<span class="cell-sub">${timePart}</span></div></td>
             <td>${escHtml(o.customer_name || '—')}</td>
             <td>${escHtml(o.customer_email || '—')}</td>
@@ -937,15 +941,26 @@ function renderOrdersTable(orders) {
                 <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Cancelado</option>
               </select>
             </td>
-            <td>
-              <button class="btn-icon" onclick="openOrderModal(${o.id})" title="Ver detalle">
-                <i class="fas fa-eye"></i>
-              </button>
+            <td class="td-actions">
+              <button class="btn-icon" onclick="openOrderModal(${o.id})" title="Ver detalle"><i class="fas fa-eye"></i></button>
+              <button class="btn-icon btn-danger" onclick="deleteOrder(${o.id})" title="Eliminar pedido"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
         }).join('')}
       </tbody>
     </table>`;
+}
+
+async function deleteOrder(id) {
+  if (!confirm(`¿Eliminar el pedido #${id}? Esta acción no se puede deshacer.`)) return;
+  try {
+    await ADMIN_API.deleteOrder(id);
+    showToast('Pedido eliminado');
+    loadOrders();
+    if (document.getElementById('section-overview').classList.contains('active')) loadOverview();
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
 }
 
 async function changeOrderStatus(id, status) {
@@ -982,11 +997,16 @@ async function openOrderModal(id) {
         </div>
         <table class="data-table" style="margin-top:1rem">
           <thead>
-            <tr><th>Producto</th><th>Talle</th><th>Cant.</th><th>P.Unit.</th><th>Subtotal</th></tr>
+            <tr><th></th><th>Producto</th><th>Talle</th><th>Cant.</th><th>P.Unit.</th><th>Subtotal</th></tr>
           </thead>
           <tbody>
             ${(o.items || []).map(i => `
               <tr>
+                <td style="width:52px;padding:8px 8px 8px 16px">
+                  ${i.product_image
+                    ? `<img src="${escHtml(i.product_image)}" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.08)">`
+                    : `<div style="width:44px;height:44px;border-radius:6px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:1.2rem">👟</div>`}
+                </td>
                 <td>${escHtml(i.product_name)}</td>
                 <td>${escHtml(i.size)}</td>
                 <td>${i.quantity}</td>
@@ -996,7 +1016,7 @@ async function openOrderModal(id) {
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4" style="text-align:right;font-weight:700">Total</td>
+              <td colspan="5" style="text-align:right;font-weight:700">Total</td>
               <td style="font-weight:700;color:#d4812a">${fmt(o.total)}</td>
             </tr>
           </tfoot>

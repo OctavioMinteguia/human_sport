@@ -47,6 +47,13 @@ class OrderController {
       res.json({ success: true, data: stats });
     } catch (err) { next(err); }
   }
+
+  async remove(req, res, next) {
+    try {
+      await orderService.deleteOrder(req.params.id);
+      res.json({ success: true, data: { id: req.params.id } });
+    } catch (err) { next(err); }
+  }
 }
 
 module.exports = new OrderController();

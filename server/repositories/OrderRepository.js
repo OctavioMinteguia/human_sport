@@ -13,7 +13,13 @@ class OrderRepository {
   async findById(id) {
     const order = await db('orders').where({ id }).first();
     if (!order) return null;
-    const items = await db('order_items').where('order_id', id);
+    const items = await db('order_items as oi')
+      .leftJoin('product_images as pi', function () {
+        this.on('pi.product_id', '=', 'oi.product_id').andOn('pi.is_primary', '=', db.raw('1'));
+      })
+      .where('oi.order_id', id)
+      .select('oi.*', 'pi.url as product_image')
+      .groupBy('oi.id');
     return { ...order, items };
   }
 
@@ -35,6 +41,10 @@ class OrderRepository {
     const data = { status, updated_at: db.fn.now() };
     if (notes !== null) data.notes = notes;
     return db('orders').where({ id }).update(data);
+  }
+
+  async delete(id) {
+    return db('orders').where({ id }).delete();
   }
 
   async getStats() {

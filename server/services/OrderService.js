@@ -47,6 +47,11 @@ class OrderService {
   async getStats() {
     return orderRepo.getStats();
   }
+
+  async deleteOrder(id) {
+    await this.getOrder(id);
+    return orderRepo.delete(id);
+  }
 }
 
 module.exports = new OrderService();

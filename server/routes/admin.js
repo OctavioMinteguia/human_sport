@@ -34,10 +34,11 @@ router.get(  '/stock/:id',         requireAuth, stockCtrl.getStock.bind(stockCtr
 router.patch('/stock/:id',         requireAuth, stockCtrl.setStock.bind(stockCtrl));
 
 // ── Orders ───────────────────────────────────────────────────────────────────
-router.get(  '/orders',            requireAuth, orderCtrl.list.bind(orderCtrl));
-router.get(  '/orders/stats',      requireAuth, orderCtrl.getStats.bind(orderCtrl));
-router.get(  '/orders/:id',        requireAuth, orderCtrl.getOne.bind(orderCtrl));
-router.patch('/orders/:id/status', requireAuth, orderCtrl.updateStatus.bind(orderCtrl));
+router.get(   '/orders',            requireAuth, orderCtrl.list.bind(orderCtrl));
+router.get(   '/orders/stats',      requireAuth, orderCtrl.getStats.bind(orderCtrl));
+router.get(   '/orders/:id',        requireAuth, orderCtrl.getOne.bind(orderCtrl));
+router.patch( '/orders/:id/status', requireAuth, orderCtrl.updateStatus.bind(orderCtrl));
+router.delete('/orders/:id',        requireAuth, orderCtrl.remove.bind(orderCtrl));
 
 // ── Bestsellers ───────────────────────────────────────────────────────────────
 router.get(   '/bestsellers',      requireAuth, bestsellerCtrl.listAdmin.bind(bestsellerCtrl));
