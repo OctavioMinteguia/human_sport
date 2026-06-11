@@ -176,7 +176,7 @@ function renderRecentOrders(orders) {
       <tbody>
         ${orders.slice(0, 5).map(o => {
           const { label, cls } = statusLabel(o.status);
-          const d = new Date(o.created_at);
+          const d = new Date((o.created_at + '').replace(' ', 'T') + 'Z');
           const tz = { timeZone: 'America/Argentina/Buenos_Aires' };
           const datePart = d.toLocaleDateString('es-AR', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric' });
           const timePart = d.toLocaleTimeString('es-AR', { ...tz, hour: '2-digit', minute: '2-digit' });
@@ -915,7 +915,7 @@ function renderOrdersTable(orders) {
       <tbody>
         ${orders.map(o => {
           const { label, cls } = statusLabel(o.status);
-          const d = new Date(o.created_at);
+          const d = new Date((o.created_at + '').replace(' ', 'T') + 'Z');
           const tz = { timeZone: 'America/Argentina/Buenos_Aires' };
           const datePart = d.toLocaleDateString('es-AR', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric' });
           const timePart = d.toLocaleTimeString('es-AR', { ...tz, hour: '2-digit', minute: '2-digit' });
@@ -985,7 +985,7 @@ async function openOrderModal(id) {
   try {
     const o = await ADMIN_API.getOrder(id);
     const { label, cls } = statusLabel(o.status);
-    const date = new Date(o.created_at).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+    const date = new Date((o.created_at + '').replace(' ', 'T') + 'Z').toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
     document.getElementById('orderModalBody').innerHTML = `
       <div class="order-detail">
         <div class="order-meta">
