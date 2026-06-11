@@ -19,8 +19,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ── Static files ─────────────────────────────────────────────────────────────
-app.use(express.static(path.join(__dirname, '../public')));
-app.use('/admin', express.static(path.join(__dirname, '../admin')));
+const noCacheOpts = {
+  setHeaders: (res, filePath) => {
+    if (/\.(js|css|html)$/.test(filePath)) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  }
+};
+app.use(express.static(path.join(__dirname, '../public'), noCacheOpts));
+app.use('/admin', express.static(path.join(__dirname, '../admin'), noCacheOpts));
 app.use('/uploads', express.static(path.join(__dirname, '../data/uploads')));
 
 // ── API Routes ────────────────────────────────────────────────────────────────
