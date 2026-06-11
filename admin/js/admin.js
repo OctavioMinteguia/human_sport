@@ -138,10 +138,9 @@ function switchSection(name) {
 // ================================================
 async function loadOverview() {
   try {
-    const [stats, orders, lowStock] = await Promise.all([
+    const [stats, orders] = await Promise.all([
       ADMIN_API.getOrderStats(),
-      ADMIN_API.getOrders({ limit: 5 }),
-      ADMIN_API.getLowStock()
+      ADMIN_API.getOrders({ limit: 5 })
     ]);
 
     document.getElementById('statTotal').textContent   = stats.total ?? 0;
@@ -150,7 +149,6 @@ async function loadOverview() {
     document.getElementById('statRevenue').textContent = fmt(stats.revenue ?? 0);
 
     renderRecentOrders(Array.isArray(orders) ? orders : (orders.orders || orders));
-    renderLowStockAlerts(lowStock);
   } catch (e) {
     showToast(e.message, 'error');
   }
