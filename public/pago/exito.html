@@ -5,33 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pago exitoso — Human Sport</title>
   <link rel="icon" type="image/png" href="/img/logo.png">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter',sans-serif;background:#080808;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .card{background:#181818;border:1px solid #252525;border-radius:16px;padding:48px 40px;max-width:440px;width:100%;text-align:center}
-    .icon{font-size:4rem;margin-bottom:20px}
-    h1{font-family:'Montserrat',sans-serif;font-size:1.6rem;font-weight:900;margin-bottom:12px}
-    p{color:#888;line-height:1.7;margin-bottom:8px;font-size:0.95rem}
-    .order{color:#d4812a;font-weight:700;font-size:1rem;margin:16px 0}
-    .btn{display:inline-flex;align-items:center;gap:8px;margin-top:28px;padding:14px 28px;background:#d4812a;color:#fff;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:0.82rem;letter-spacing:1px;text-transform:uppercase;text-decoration:none;transition:.3s ease}
-    .btn:hover{background:#b86a1f;transform:translateY(-2px)}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      position: relative; overflow: hidden;
+    }
+
+    .bg {
+      position: fixed; inset: 0;
+      background: url('/img/2-slide-1774462795306-8807903285-e83c2d0da3a451febcebd7aed6cfeea11774462662-1920-1920.jpg') center/cover no-repeat;
+      filter: blur(10px);
+      transform: scale(1.08);
+      z-index: 0;
+    }
+
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1;
+    }
+
+    .card {
+      position: relative; z-index: 2;
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 52px 44px;
+      max-width: 460px; width: 100%;
+      text-align: center;
+      color: #fff;
+    }
+
+    .icon { font-size: 3.6rem; margin-bottom: 20px; }
+
+    .brand {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.9rem; font-weight: 900;
+      text-transform: uppercase; line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .divider {
+      width: 40px; height: 3px;
+      background: #d4812a;
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    p {
+      color: rgba(255,255,255,0.75);
+      line-height: 1.75; font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .order {
+      display: inline-block;
+      margin: 20px 0 0;
+      padding: 8px 20px;
+      background: rgba(212,129,42,0.15);
+      border: 1px solid rgba(212,129,42,0.4);
+      border-radius: 20px;
+      color: #d4812a; font-weight: 700; font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 32px; padding: 14px 32px;
+      background: #d4812a; color: #fff;
+      border-radius: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700; font-size: 0.8rem;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      text-decoration: none;
+      transition: background .25s ease, transform .25s ease;
+    }
+    .btn:hover { background: #b86a1f; transform: translateY(-2px); }
+
+    @media (max-width: 480px) {
+      .card { padding: 40px 28px; }
+      h1 { font-size: 1.5rem; }
+    }
   </style>
 </head>
 <body>
+  <div class="bg"></div>
+  <div class="overlay"></div>
   <div class="card">
     <div class="icon">🎉</div>
+    <div class="brand">Human Sport</div>
     <h1>¡Pago exitoso!</h1>
+    <div class="divider"></div>
     <p>Tu pedido fue confirmado y lo estamos preparando.</p>
     <p>Pronto te contactamos por WhatsApp para coordinar el envío.</p>
     <div class="order" id="orderRef"></div>
+    <br>
     <a href="/" class="btn">← Seguir comprando</a>
   </div>
   <script>
     localStorage.removeItem('hs_cart');
     const params = new URLSearchParams(location.search);
     const ref = params.get('external_reference');
-    if (ref) document.getElementById('orderRef').textContent = 'Pedido #' + ref;
+    const el = document.getElementById('orderRef');
+    if (ref) el.textContent = 'Pedido #' + ref;
+    else el.style.display = 'none';
   </script>
 </body>
 </html>
