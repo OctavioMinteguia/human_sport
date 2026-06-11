@@ -1002,10 +1002,10 @@ async function openOrderModal(id) {
           <tbody>
             ${(o.items || []).map(i => `
               <tr>
-                <td style="width:52px;padding:8px 8px 8px 16px">
+                <td style="width:72px;padding:8px 8px 8px 16px">
                   ${i.product_image
-                    ? `<img src="${escHtml(i.product_image)}" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.08)">`
-                    : `<div style="width:44px;height:44px;border-radius:6px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:1.2rem">👟</div>`}
+                    ? `<img src="${escHtml(i.product_image)}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08)">`
+                    : `<div style="width:64px;height:64px;border-radius:8px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:1.4rem">👟</div>`}
                 </td>
                 <td>${escHtml(i.product_name)}</td>
                 <td>${escHtml(i.size)}</td>
