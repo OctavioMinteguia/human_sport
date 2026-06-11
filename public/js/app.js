@@ -1148,6 +1148,108 @@ async function loadMyOrders() {
 }
 
 // ================================================
+// INFO MODALS (guía de talles, cambios, FAQ)
+// ================================================
+const INFO_CONTENT = {
+  talles: {
+    title: 'Guía de Talles',
+    html: `
+      <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:16px">Medidas en centímetros. Para dudas, consultanos por WhatsApp.</p>
+      <div style="overflow-x:auto">
+        <table class="info-table">
+          <thead><tr><th>Medida</th><th>S</th><th>M</th><th>L</th><th>XL</th></tr></thead>
+          <tbody>
+            <tr><td>Cintura</td><td>67–74</td><td>74–81</td><td>81–88</td><td>88–98</td></tr>
+            <tr><td>Cadera</td><td>91–98</td><td>98–105</td><td>105–112</td><td>112–120</td></tr>
+            <tr><td>Busto</td><td>85–90</td><td>90–95</td><td>95–100</td><td>100–105</td></tr>
+            <tr><td>Estatura</td><td>163–173</td><td>163–173</td><td>163–173</td><td>163–173</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--text-muted);font-size:0.8rem;margin-top:14px">¿No encontrás tu talle? <a href="https://wa.me/5492346581240" target="_blank" style="color:var(--orange)">Consultanos</a> y te ayudamos.</p>`
+  },
+  cambios: {
+    title: 'Política de Cambios',
+    html: `
+      <div class="info-section">
+        <h4>¿Cuándo puedo solicitar un cambio?</h4>
+        <p>Aceptamos cambios dentro de los <strong>30 días corridos</strong> desde la fecha de compra.</p>
+      </div>
+      <div class="info-section">
+        <h4>Condiciones del producto</h4>
+        <ul class="info-list">
+          <li>La ropa debe estar <strong>sin uso</strong>, sin manchas, roturas ni olores.</li>
+          <li>Debe conservar la <strong>etiqueta original</strong> y estar en su embalaje.</li>
+          <li>No se aceptan cambios de productos en <strong>liquidación o promoción especial</strong>.</li>
+        </ul>
+      </div>
+      <div class="info-section">
+        <h4>¿Cómo realizarlo?</h4>
+        <ul class="info-list">
+          <li>Contactanos por WhatsApp con tu número de pedido y el motivo del cambio.</li>
+          <li>Los gastos de envío por cambio de talle corren por cuenta del comprador.</li>
+          <li>Si el cambio es por defecto de fabricación, nos hacemos cargo del envío.</li>
+        </ul>
+      </div>
+      <div class="info-section">
+        <h4>Importante</h4>
+        <p>No realizamos <strong>reintegros de dinero</strong>. Los cambios son por otro talle o modelo de igual o mayor valor (abonando la diferencia).</p>
+      </div>
+      <a href="https://wa.me/5492346581240?text=Hola!%20Quiero%20hacer%20un%20cambio." target="_blank" class="btn btn-primary" style="margin-top:8px;display:inline-flex">
+        <i class="fab fa-whatsapp"></i> Iniciar cambio por WhatsApp
+      </a>`
+  },
+  faq: {
+    title: 'Preguntas Frecuentes',
+    html: `
+      <div class="faq-item">
+        <div class="faq-q">¿Hacen envíos a todo el país?</div>
+        <div class="faq-a">Sí, enviamos a todo el país a través de correo privado. El costo y tiempo de entrega varía según la zona.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Cuánto tarda el envío?</div>
+        <div class="faq-a">Entre 3 y 7 días hábiles dependiendo la localidad. Para el interior del país puede demorar un poco más.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Cómo puedo pagar?</div>
+        <div class="faq-a">Aceptamos pagos por MercadoPago (todas las tarjetas de crédito y débito, dinero en cuenta), transferencia bancaria y efectivo.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Los precios incluyen IVA?</div>
+        <div class="faq-a">Sí, todos los precios publicados son finales e incluyen impuestos.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Cómo sé qué talle elegir?</div>
+        <div class="faq-a">Podés consultar nuestra <a href="#" onclick="openInfoModal('talles');return false" style="color:var(--orange)">guía de talles</a>. Si tenés dudas, escribinos y te ayudamos a elegir.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Puedo hacer una devolución?</div>
+        <div class="faq-a">No realizamos reintegros de dinero, pero sí aceptamos cambios de talle o modelo dentro de los 30 días. Consultá nuestra <a href="#" onclick="openInfoModal('cambios');return false" style="color:var(--orange)">política de cambios</a>.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Tienen local físico?</div>
+        <div class="faq-a">Sí, estamos en Chivilcoy, Buenos Aires. Para coordinar una visita, escribinos por WhatsApp.</div>
+      </div>`
+  }
+};
+
+function openInfoModal(key) {
+  const content = INFO_CONTENT[key];
+  if (!content) return;
+  const modal = document.getElementById('infoModal');
+  document.getElementById('infoModalContent').innerHTML =
+    `<h3 class="info-modal-title">${content.title}</h3>${content.html}`;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeInfoModal() {
+  const modal = document.getElementById('infoModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// ================================================
 // INIT
 // ================================================
 document.addEventListener('click', () => closeUserDropdown());

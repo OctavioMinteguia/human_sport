@@ -435,22 +435,12 @@
                     </div>
                 </div>
                 <div class="footer-links">
-                    <h4>CATÁLOGO</h4>
-                    <ul>
-                        <li><a href="#catalogo">Calzas</a></li>
-                        <li><a href="#catalogo">Tops & Musculosas</a></li>
-                        <li><a href="#catalogo">Buzos & Camperas</a></li>
-                        <li><a href="#catalogo">Conjuntos</a></li>
-                        <li><a href="#catalogo">Shorts</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
                     <h4>INFORMACIÓN</h4>
                     <ul>
                         <li><a href="#nosotros">Sobre nosotros</a></li>
-                        <li><a href="#" onclick="return false">Política de cambios</a></li>
-                        <li><a href="#" onclick="return false">Guía de talles</a></li>
-                        <li><a href="#" onclick="return false">Preguntas frecuentes</a></li>
+                        <li><a href="#" onclick="openInfoModal('cambios');return false">Política de cambios</a></li>
+                        <li><a href="#" onclick="openInfoModal('talles');return false">Guía de talles</a></li>
+                        <li><a href="#" onclick="openInfoModal('faq');return false">Preguntas frecuentes</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">
@@ -473,12 +463,20 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2025 Human Sport. Todos los derechos reservados.</p>
+                <p>© 2026 Human Sport. Todos los derechos reservados.</p>
                 <p>Chivilcoy, Buenos Aires, Argentina</p>
                 <p>Built by <a href="https://wa.me/5492345404999" target="_blank" rel="noopener" class="footer-built-by">Octavio Minteguía</a></p>
             </div>
         </div>
     </footer>
+
+    <!-- INFO MODAL -->
+    <div class="modal-overlay" id="infoModal" style="display:none" onclick="if(event.target===this)closeInfoModal()">
+        <div class="modal info-modal-box">
+            <button class="modal-close" onclick="closeInfoModal()" aria-label="Cerrar">✕</button>
+            <div id="infoModalContent"></div>
+        </div>
+    </div>
 
     <!-- CART SIDEBAR -->
     <div class="cart-overlay" id="cartOverlay"></div>
