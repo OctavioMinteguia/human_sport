@@ -175,7 +175,7 @@ function renderRecentOrders(orders) {
       <tbody>
         ${orders.slice(0, 5).map(o => {
           const { label, cls } = statusLabel(o.status);
-          const date = new Date(o.created_at).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+          const date = new Date(o.created_at).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
           return `<tr>
             <td>#${o.id}</td>
             <td>${date}</td>
@@ -911,7 +911,7 @@ function renderOrdersTable(orders) {
       <tbody>
         ${orders.map(o => {
           const { label, cls } = statusLabel(o.status);
-          const date = new Date(o.created_at).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+          const date = new Date(o.created_at).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
           const payBadge = paymentBadge(o.payment_status);
           return `<tr>
             <td>#${o.id}</td>
