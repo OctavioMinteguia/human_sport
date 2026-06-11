@@ -14,12 +14,11 @@ class OrderRepository {
     const order = await db('orders').where({ id }).first();
     if (!order) return null;
     const items = await db('order_items as oi')
-      .leftJoin('product_images as pi', function () {
-        this.on('pi.product_id', '=', 'oi.product_id').andOn('pi.is_primary', '=', db.raw('1'));
-      })
       .where('oi.order_id', id)
-      .select('oi.*', 'pi.url as product_image')
-      .groupBy('oi.id');
+      .select(
+        'oi.*',
+        db.raw('(SELECT url FROM product_images WHERE product_id = oi.product_id AND is_primary = 1 LIMIT 1) as product_image')
+      );
     return { ...order, items };
   }
 
