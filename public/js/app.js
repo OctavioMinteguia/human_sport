@@ -586,6 +586,18 @@ function setFilter(filter) {
   const active = document.querySelector(`.filter-btn[data-filter="${filter}"]`);
   if (active) active.classList.add('active');
   renderProducts(filter);
+  updateFilterBtnLabels();
+}
+
+function updateFilterBtnLabels() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const filter = btn.dataset.filter;
+    const isActive = btn.classList.contains('active');
+    const label = filter === 'all' ? 'Todos' : filter.charAt(0).toUpperCase() + filter.slice(1);
+    btn.innerHTML = isActive && filter !== 'all'
+      ? `${label} <span class="filter-btn-x">×</span>`
+      : label;
+  });
 }
 
 function renderCategoryFilters(products) {
@@ -595,7 +607,10 @@ function renderCategoryFilters(products) {
   bar.innerHTML = `<button class="filter-btn active" data-filter="all">Todos</button>` +
     cats.map(c => `<button class="filter-btn" data-filter="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</button>`).join('');
   bar.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+    btn.addEventListener('click', () => {
+      const isAlreadyActive = btn.classList.contains('active') && btn.dataset.filter !== 'all';
+      setFilter(isAlreadyActive ? 'all' : btn.dataset.filter);
+    });
   });
 }
 

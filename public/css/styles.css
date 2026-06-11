@@ -375,6 +375,11 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 .filter-btn:hover, .filter-btn.active {
     background: var(--orange); color: #fff; border-color: var(--orange);
 }
+.filter-btn-x {
+    display: inline-block; margin-left: 6px;
+    font-size: 0.95rem; font-weight: 400; opacity: 0.85;
+    line-height: 1;
+}
 
 .products-grid {
     display: grid;
