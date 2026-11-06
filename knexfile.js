@@ -15,6 +15,17 @@ module.exports = {
     },
     useNullAsDefault: true
   },
+  // Throwaway database for automated tests (path set by the test runner).
+  test: {
+    client: 'better-sqlite3',
+    connection: {
+      filename: process.env.TEST_DB_FILE || ':memory:'
+    },
+    migrations: {
+      directory: path.resolve(__dirname, 'database/migrations')
+    },
+    useNullAsDefault: true
+  },
   production: {
     client: 'better-sqlite3',
     connection: {

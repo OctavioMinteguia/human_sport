@@ -1,18 +1,22 @@
-const jwt      = require('jsonwebtoken');
 const AppError = require('../utils/AppError');
+const { readBearerToken, verifyToken } = require('../utils/token');
 
+// Admin-only routes. Customer tokens share the same secret, so the role claim
+// is what separates them: anything that is not an admin token gets 403.
 function requireAuth(req, res, next) {
-  const header = req.headers.authorization;
-  if (!header || !header.startsWith('Bearer ')) {
-    return next(new AppError('Token requerido', 401));
-  }
-  const token = header.slice(7);
+  const token = readBearerToken(req);
+  if (!token) return next(new AppError('Token requerido', 401));
+
+  let payload;
   try {
-    req.admin = jwt.verify(token, process.env.JWT_SECRET);
-    next();
+    payload = verifyToken(token);
   } catch {
-    next(new AppError('Token inválido o expirado', 401));
+    return next(new AppError('Token inválido o expirado', 401));
   }
+  if (payload.role !== 'admin') return next(new AppError('Acceso denegado', 403));
+
+  req.admin = payload;
+  next();
 }
 
 module.exports = { requireAuth };

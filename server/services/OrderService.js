@@ -1,11 +1,13 @@
 const orderRepo   = require('../repositories/OrderRepository');
 const AppError    = require('../utils/AppError');
+const cartPricing = require('./CartPricingService');
 
 class OrderService {
   async createFromCart({ items, customer_name, customer_phone }) {
     if (!items || items.length === 0) throw new AppError('El carrito está vacío');
 
-    const total = items.reduce((s, i) => s + i.unit_price * i.quantity, 0);
+    // WhatsApp orders ask the shop to confirm availability, so stock is not enforced here.
+    const { lines, total } = await cartPricing.priceItems(items, { checkStock: false });
 
     const orderId = await orderRepo.create({
       customer_name:  customer_name  || null,
@@ -13,14 +15,7 @@ class OrderService {
       total,
       status: 'pending',
       whatsapp_sent: true,
-      items: items.map(i => ({
-        product_id:   i.product_id   || null,
-        product_name: i.product_name,
-        brand:        i.brand        || null,
-        size:         i.size,
-        quantity:     i.quantity,
-        unit_price:   i.unit_price
-      }))
+      items: lines.map(l => cartPricing.toOrderItem(l))
     });
 
     return orderRepo.findById(orderId);

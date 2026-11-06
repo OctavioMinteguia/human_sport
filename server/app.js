@@ -10,6 +10,7 @@ const bestsellerRoutes  = require('./routes/bestsellers');
 const checkoutRoutes    = require('./routes/checkout');
 const authRoutes        = require('./routes/auth');
 const AppError          = require('./utils/AppError');
+const logger            = require('./utils/logger');
 
 const app = express();
 
@@ -78,7 +79,7 @@ app.get('*', (req, res) => {
 app.use((err, req, res, _next) => {
   const status  = err.status || 500;
   const message = err.message || 'Error interno del servidor';
-  if (status === 500) console.error('[ERROR]', err);
+  if (status === 500) logger.error('[ERROR]', err);
   res.status(status).json({ success: false, error: message });
 });
 

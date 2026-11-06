@@ -1,33 +1,35 @@
 const db  = require('../config/database');
 const mp  = require('../config/mercadopago');
-const jwt = require('jsonwebtoken');
+const logger = require('../utils/logger');
+const { readBearerToken, verifyToken } = require('../utils/token');
+const cartPricing = require('../services/CartPricingService');
 
 class CheckoutController {
 
   async createPreference(req, res, next) {
     try {
-      const { items } = req.body;
-      if (!Array.isArray(items) || !items.length) {
-        return res.status(400).json({ success: false, error: 'Carrito vacío' });
-      }
-
-      const total = items.reduce((s, i) => s + parseFloat(i.price) * parseInt(i.qty), 0);
+      // Prices, names and stock come from the database; the cart only picks products.
+      const { lines, total } = await cartPricing.priceItems(req.body.items);
       const baseUrl = (process.env.BASE_URL || 'http://localhost:3001').replace(/\/+$/, '');
 
       // Leer customer del JWT si está logueado
       let customerId = null;
       let customerEmail = null;
       let customerName = null;
-      const header = req.headers['authorization'] || '';
-      const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
+      const token = readBearerToken(req);
       if (token) {
         try {
-          const payload = jwt.verify(token, process.env.JWT_SECRET);
-          customerId = payload.id;
-          customerEmail = payload.email;
-          const c = await db('customers').where({ id: customerId }).select('name', 'email', 'phone').first();
-          if (c) { customerName = c.name; customerEmail = c.email; }
-        } catch {}
+          const payload = verifyToken(token);
+          if (payload.role === 'customer') {
+            customerId = payload.id;
+            customerEmail = payload.email;
+            const c = await db('customers').where({ id: customerId }).select('name', 'email', 'phone').first();
+            if (c) { customerName = c.name; customerEmail = c.email; }
+          }
+        } catch (tokenErr) {
+          // Login is optional at checkout: a bad or expired token is treated as a guest.
+          logger.info('[Checkout] token ignored, continuing as guest:', tokenErr.message);
+        }
       }
 
       // Crear orden en DB antes de ir a MP
@@ -42,22 +44,14 @@ class CheckoutController {
       });
 
       await db('order_items').insert(
-        items.map(i => ({
-          order_id:     orderId,
-          product_id:   i.id   || null,
-          product_name: i.name,
-          brand:        i.brand || null,
-          size:         i.size  || '',
-          quantity:     parseInt(i.qty),
-          unit_price:   parseFloat(i.price)
-        }))
+        lines.map(l => ({ order_id: orderId, ...cartPricing.toOrderItem(l) }))
       );
 
       // Crear preferencia en MercadoPago
-      const mpItems = items.map(i => ({
-        title:      `${i.name}${i.size ? ` - Talle ${i.size}` : ''}`,
-        quantity:   parseInt(i.qty),
-        unit_price: parseFloat(i.price),
+      const mpItems = lines.map(l => ({
+        title:      `${l.product_name}${l.size ? ` - Talle ${l.size}` : ''}`,
+        quantity:   l.quantity,
+        unit_price: l.unit_price,
         currency_id: 'ARS'
       }));
 
@@ -121,7 +115,7 @@ class CheckoutController {
         }
       }
     } catch (err) {
-      console.error('[Webhook MP]', err.message);
+      logger.error('[Webhook MP]', err.message);
     }
 
     res.status(200).json({ received: true });

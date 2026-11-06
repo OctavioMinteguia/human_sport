@@ -1,5 +1,5 @@
 const bcrypt  = require('bcryptjs');
-const jwt     = require('jsonwebtoken');
+const { signToken } = require('../utils/token');
 const adminRepo = require('../repositories/AdminRepository');
 const AppError  = require('../utils/AppError');
 
@@ -13,10 +13,9 @@ class AuthService {
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) throw new AppError('Credenciales inválidas', 401);
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+    const token = signToken(
+      { id: user.id, email: user.email, role: 'admin' },
+      process.env.JWT_EXPIRES_IN || '24h'
     );
 
     return {

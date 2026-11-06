@@ -1,13 +1,12 @@
 const bcrypt   = require('bcryptjs');
-const jwt      = require('jsonwebtoken');
 const repo     = require('../repositories/CustomerRepository');
 const db       = require('../config/database');
+const { signToken: sign } = require('../utils/token');
 
-const JWT_SECRET  = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '7d';
 
 function signToken(customer) {
-  return jwt.sign({ id: customer.id, email: customer.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
+  return sign({ id: customer.id, email: customer.email, role: 'customer' }, JWT_EXPIRES);
 }
 
 class AuthController {
