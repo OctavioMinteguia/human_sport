@@ -3,6 +3,17 @@ const mp  = require('../config/mercadopago');
 const logger = require('../utils/logger');
 const { readBearerToken, verifyToken } = require('../utils/token');
 const cartPricing = require('../services/CartPricingService');
+const { WebhookSignatureValidator } = require('mercadopago');
+
+if (process.env.NODE_ENV === 'production' && !process.env.MP_WEBHOOK_SECRET) {
+  logger.error('[Webhook MP] MP_WEBHOOK_SECRET is not set: payment notifications are accepted without signature verification.');
+}
+
+// Cents of tolerance for rounding; paying more than the total is accepted.
+function paymentCoversOrder(payment, order) {
+  return payment.currency_id === 'ARS'
+    && Number(payment.transaction_amount) + 0.01 >= Number(order.total);
+}
 
 class CheckoutController {
 
@@ -80,12 +91,29 @@ class CheckoutController {
   }
 
   async webhook(req, res) {
-    // Siempre responder 200 a MP, aunque algo falle
-    try {
-      const { type, data } = req.body;
+    const { type, data } = req.body || {};
+    // MercadoPago signs the id it sends in the query string; fall back to the body for old-style calls.
+    const paymentId = req.query['data.id'] || data?.id;
 
-      if (type === 'payment' && data?.id) {
-        const paymentData = await mp.payment.get({ id: data.id });
+    const secret = process.env.MP_WEBHOOK_SECRET;
+    if (secret) {
+      try {
+        WebhookSignatureValidator.validate({
+          xSignature: req.get('x-signature'),
+          xRequestId: req.get('x-request-id'),
+          dataId:     paymentId,
+          secret
+        });
+      } catch (err) {
+        logger.error('[Webhook MP] rejected notification:', err.reason || err.message, 'request-id:', req.get('x-request-id'));
+        return res.status(401).json({ received: false });
+      }
+    }
+
+    // Once the notification is authentic, always answer 200 so MP does not keep retrying.
+    try {
+      if (type === 'payment' && paymentId) {
+        const paymentData = await mp.payment.get({ id: paymentId });
         const orderId     = paymentData.external_reference;
         const mpStatus    = paymentData.status;
 
@@ -97,7 +125,7 @@ class CheckoutController {
           cancelled:  { status: 'cancelled', payment_status: 'cancelled' }
         };
 
-        const update = map[mpStatus] || { payment_status: mpStatus };
+        let update = map[mpStatus] || { payment_status: mpStatus };
 
         // Capturar datos del pagador si la orden no los tiene
         const payer = paymentData.payer || {};
@@ -106,8 +134,16 @@ class CheckoutController {
 
         if (orderId) {
           const order = await db('orders').where({ id: orderId }).first();
+
+          // An approved payment only confirms the order when it covers the order total in pesos.
+          if (mpStatus === 'approved' && order && !paymentCoversOrder(paymentData, order)) {
+            logger.error('[Webhook MP] paid amount does not match order', orderId,
+              'paid:', paymentData.transaction_amount, paymentData.currency_id, 'expected:', order.total, 'ARS');
+            update = { payment_status: 'amount_mismatch' };
+          }
+
           await db('orders').where({ id: orderId }).update({
-            payment_id:     String(data.id),
+            payment_id:     String(paymentId),
             ...update,
             ...(payerName  && !order?.customer_name  ? { customer_name:  payerName  } : {}),
             ...(payerEmail && !order?.customer_email ? { customer_email: payerEmail } : {})
