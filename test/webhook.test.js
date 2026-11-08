@@ -147,6 +147,22 @@ test('the payment fetched is the signed id, not the id in the body', async () =>
   assert.deepEqual(fetchedIds, ['115']);
 });
 
+test('a repeated data.id in the query uses only the signed first value', async () => {
+  const orderId = await newOrder();
+  payments['116'] = approvedPayment(orderId);
+
+  const res = await fetch(`${base}/api/webhook/mercadopago?data.id=116&data.id=999&type=payment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-request-id': 'req-1', 'x-signature': sign('116', 'req-1') },
+    body: JSON.stringify({ type: 'payment', data: { id: '116' } })
+  });
+
+  assert.equal(res.status, 200);
+  assert.deepEqual(fetchedIds, ['116']);
+  const order = await db('orders').where({ id: orderId }).first();
+  assert.equal(order.payment_id, '116');
+});
+
 // ── Paid amount ──
 
 test('an approved payment for less than the order total does not confirm the order', async () => {

@@ -93,7 +93,8 @@ class CheckoutController {
   async webhook(req, res) {
     const { type, data } = req.body || {};
     // MercadoPago signs the id it sends in the query string; fall back to the body for old-style calls.
-    const paymentId = req.query['data.id'] || data?.id;
+    const queryId   = [].concat(req.query['data.id'] ?? [])[0];
+    const paymentId = queryId || data?.id;
 
     const secret = process.env.MP_WEBHOOK_SECRET;
     if (secret) {

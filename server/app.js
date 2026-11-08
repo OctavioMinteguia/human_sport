@@ -18,7 +18,8 @@ const app = express();
 // real client IP; otherwise every visitor shares the proxy IP and the login limits.
 if (process.env.TRUST_PROXY) {
   const hops = process.env.TRUST_PROXY;
-  app.set('trust proxy', /^\d+$/.test(hops) ? Number(hops) : hops);
+  // Accepts a hop count (1), "true", or values Express understands such as "loopback".
+  app.set('trust proxy', /^\d+$/.test(hops) ? Number(hops) : hops === 'true' ? true : hops);
 }
 
 // ── Middleware ────────────────────────────────────────────────────────────────

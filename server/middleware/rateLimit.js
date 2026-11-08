@@ -4,8 +4,12 @@
 // State lives in this process only and is lost on restart, which is fine for one server.
 function rateLimitFailures({ windowMs, max, message, now = Date.now }) {
   const hits = new Map(); // ip -> { count, resetAt }
+  let nextPruneAt = 0;
 
   function prune(time) {
+    // At most once per minute, so a flood of distinct IPs does not scan the map on every request.
+    if (time < nextPruneAt) return;
+    nextPruneAt = time + 60 * 1000;
     for (const [key, entry] of hits) {
       if (entry.resetAt <= time) hits.delete(key);
     }
