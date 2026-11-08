@@ -14,6 +14,13 @@ const logger            = require('./utils/logger');
 
 const app = express();
 
+// Behind a reverse proxy (nginx, hosting panel) set TRUST_PROXY (usually 1) so req.ip is the
+// real client IP; otherwise every visitor shares the proxy IP and the login limits.
+if (process.env.TRUST_PROXY) {
+  const hops = process.env.TRUST_PROXY;
+  app.set('trust proxy', /^\d+$/.test(hops) ? Number(hops) : hops);
+}
+
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());

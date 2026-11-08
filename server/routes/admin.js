@@ -1,6 +1,7 @@
 const router            = require('express').Router();
 const { requireAuth }   = require('../middleware/auth');
 const { upload }        = require('../middleware/upload');
+const { adminLoginLimiter } = require('../middleware/rateLimit');
 const productCtrl       = require('../controllers/ProductController');
 const stockCtrl         = require('../controllers/StockController');
 const orderCtrl         = require('../controllers/OrderController');
@@ -8,7 +9,7 @@ const adminCtrl         = require('../controllers/AdminController');
 const bestsellerCtrl    = require('../controllers/BestsellerController');
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
-router.post('/auth/login',           adminCtrl.login.bind(adminCtrl));
+router.post('/auth/login',           adminLoginLimiter, adminCtrl.login.bind(adminCtrl));
 router.get( '/auth/me',  requireAuth, adminCtrl.me.bind(adminCtrl));
 router.post('/auth/change-password', requireAuth, adminCtrl.changePassword.bind(adminCtrl));
 
