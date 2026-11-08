@@ -11,16 +11,14 @@ const checkoutRoutes    = require('./routes/checkout');
 const authRoutes        = require('./routes/auth');
 const AppError          = require('./utils/AppError');
 const logger            = require('./utils/logger');
+const { resolveTrustProxy } = require('./utils/trustProxy');
 
 const app = express();
 
 // Behind a reverse proxy (nginx, hosting panel) set TRUST_PROXY (usually 1) so req.ip is the
 // real client IP; otherwise every visitor shares the proxy IP and the login limits.
-if (process.env.TRUST_PROXY) {
-  const hops = process.env.TRUST_PROXY;
-  // Accepts a hop count (1), "true", or values Express understands such as "loopback".
-  app.set('trust proxy', /^\d+$/.test(hops) ? Number(hops) : hops === 'true' ? true : hops);
-}
+const trustProxy = resolveTrustProxy(process.env.TRUST_PROXY);
+if (trustProxy !== undefined) app.set('trust proxy', trustProxy);
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());

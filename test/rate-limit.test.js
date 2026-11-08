@@ -121,3 +121,40 @@ test('the limit resets once the window has passed', () => {
   now = 1000;
   assert.equal(attempt(limiter, 200).passed, true);
 });
+
+test('server errors (5xx) do not count as failed attempts', () => {
+  const limiter = rateLimitFailures({ windowMs: 1000, max: 2, message: 'Demasiados intentos', now: () => 0 });
+
+  for (let i = 0; i < 5; i++) {
+    assert.equal(attempt(limiter, 500).passed, true, `server error ${i + 1} must not block`);
+  }
+  assert.equal(attempt(limiter, 401).passed, true);
+  assert.equal(attempt(limiter, 401).passed, true);
+  assert.equal(attempt(limiter, 200).passed, false);
+});
+
+// ── TRUST_PROXY parsing (unit) ──
+
+test('TRUST_PROXY accepts hop counts and proxy lists, and never trusts every hop', () => {
+  const { resolveTrustProxy } = require('../server/utils/trustProxy');
+  assert.equal(resolveTrustProxy(undefined), undefined);
+  assert.equal(resolveTrustProxy(''), undefined);
+  assert.equal(resolveTrustProxy('false'), undefined);
+  assert.equal(resolveTrustProxy('0'), undefined);
+  assert.equal(resolveTrustProxy('1'), 1);
+  assert.equal(resolveTrustProxy(' 2 '), 2);
+  assert.equal(resolveTrustProxy('true'), 1);
+  assert.equal(resolveTrustProxy('loopback'), 'loopback');
+  assert.equal(resolveTrustProxy('10.0.0.1, 10.0.0.2'), '10.0.0.1, 10.0.0.2');
+});
+
+test('the app loads with any supported TRUST_PROXY value', () => {
+  const { execFileSync } = require('node:child_process');
+  for (const value of ['1', 'true', 'false', 'loopback']) {
+    execFileSync(process.execPath, ['-e', "require('./server/app')"], {
+      cwd: path.join(__dirname, '..'),
+      env: { ...process.env, TRUST_PROXY: value },
+      stdio: 'pipe'
+    });
+  }
+});

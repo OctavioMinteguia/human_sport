@@ -1,6 +1,6 @@
 // In-memory limiter for failed attempts per client IP (e.g. logins).
 // Each request counts up front, so parallel requests cannot slip past the limit;
-// requests that end in success (status < 400) are taken back off the count.
+// requests that do not end in a 4xx are taken back off the count.
 // State lives in this process only and is lost on restart, which is fine for one server.
 function rateLimitFailures({ windowMs, max, message, now = Date.now }) {
   const hits = new Map(); // ip -> { count, resetAt }
@@ -33,7 +33,9 @@ function rateLimitFailures({ windowMs, max, message, now = Date.now }) {
 
     entry.count += 1;
     res.on('finish', () => {
-      if (res.statusCode < 400 && hits.get(key) === entry) entry.count -= 1;
+      // Only client errors (4xx, e.g. a wrong password) count; server errors are not the visitor's fault.
+      const failed = res.statusCode >= 400 && res.statusCode < 500;
+      if (!failed && hits.get(key) === entry) entry.count -= 1;
     });
     next();
   };

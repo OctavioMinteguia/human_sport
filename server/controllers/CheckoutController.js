@@ -96,6 +96,12 @@ class CheckoutController {
     const queryId   = [].concat(req.query['data.id'] ?? [])[0];
     const paymentId = queryId || data?.id;
 
+    // Only payment notifications with an id are acted on. Anything else (other topics, legacy IPN
+    // calls) is acknowledged with 200 so MercadoPago stops retrying, and nothing is changed.
+    if (type !== 'payment' || !paymentId) {
+      return res.status(200).json({ received: true });
+    }
+
     const secret = process.env.MP_WEBHOOK_SECRET;
     if (secret) {
       try {
@@ -113,43 +119,41 @@ class CheckoutController {
 
     // Once the notification is authentic, always answer 200 so MP does not keep retrying.
     try {
-      if (type === 'payment' && paymentId) {
-        const paymentData = await mp.payment.get({ id: paymentId });
-        const orderId     = paymentData.external_reference;
-        const mpStatus    = paymentData.status;
+      const paymentData = await mp.payment.get({ id: paymentId });
+      const orderId     = paymentData.external_reference;
+      const mpStatus    = paymentData.status;
 
-        const map = {
-          approved:   { status: 'confirmed', payment_status: 'approved' },
-          rejected:   { status: 'cancelled', payment_status: 'rejected' },
-          pending:    { status: 'pending',   payment_status: 'pending'  },
-          in_process: { status: 'pending',   payment_status: 'in_process' },
-          cancelled:  { status: 'cancelled', payment_status: 'cancelled' }
-        };
+      const map = {
+        approved:   { status: 'confirmed', payment_status: 'approved' },
+        rejected:   { status: 'cancelled', payment_status: 'rejected' },
+        pending:    { status: 'pending',   payment_status: 'pending'  },
+        in_process: { status: 'pending',   payment_status: 'in_process' },
+        cancelled:  { status: 'cancelled', payment_status: 'cancelled' }
+      };
 
-        let update = map[mpStatus] || { payment_status: mpStatus };
+      let update = map[mpStatus] || { payment_status: mpStatus };
 
-        // Capturar datos del pagador si la orden no los tiene
-        const payer = paymentData.payer || {};
-        const payerName = [payer.first_name, payer.last_name].filter(Boolean).join(' ').trim() || null;
-        const payerEmail = payer.email || null;
+      // Capturar datos del pagador si la orden no los tiene
+      const payer = paymentData.payer || {};
+      const payerName = [payer.first_name, payer.last_name].filter(Boolean).join(' ').trim() || null;
+      const payerEmail = payer.email || null;
 
-        if (orderId) {
-          const order = await db('orders').where({ id: orderId }).first();
+      if (orderId) {
+        const order = await db('orders').where({ id: orderId }).first();
 
-          // An approved payment only confirms the order when it covers the order total in pesos.
-          if (mpStatus === 'approved' && order && !paymentCoversOrder(paymentData, order)) {
-            logger.error('[Webhook MP] paid amount does not match order', orderId,
-              'paid:', paymentData.transaction_amount, paymentData.currency_id, 'expected:', order.total, 'ARS');
-            update = { payment_status: 'amount_mismatch' };
-          }
-
-          await db('orders').where({ id: orderId }).update({
-            payment_id:     String(paymentId),
-            ...update,
-            ...(payerName  && !order?.customer_name  ? { customer_name:  payerName  } : {}),
-            ...(payerEmail && !order?.customer_email ? { customer_email: payerEmail } : {})
-          });
+        // An approved payment only confirms the order when it covers the order total in pesos.
+        if (mpStatus === 'approved' && order && !paymentCoversOrder(paymentData, order)) {
+          logger.error('[Webhook MP] paid amount does not match order', orderId,
+            'paid:', paymentData.transaction_amount, paymentData.currency_id, 'expected:', order.total, 'ARS');
+          update = { payment_status: 'amount_mismatch' };
         }
+
+        await db('orders').where({ id: orderId }).update({
+          payment_id:     String(paymentId),
+          ...update,
+          ...(payerName  && !order?.customer_name  ? { customer_name:  payerName  } : {}),
+          ...(payerEmail && !order?.customer_email ? { customer_email: payerEmail } : {})
+        });
       }
     } catch (err) {
       logger.error('[Webhook MP]', err.message);

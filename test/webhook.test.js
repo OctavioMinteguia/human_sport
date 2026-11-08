@@ -163,6 +163,22 @@ test('a repeated data.id in the query uses only the signed first value', async (
   assert.equal(order.payment_id, '116');
 });
 
+test('an unsigned notification that is not a payment is acknowledged and ignored', async () => {
+  const cases = [
+    { url: '/api/webhook/mercadopago?data.id=555&type=merchant_order', body: { type: 'merchant_order', data: { id: '555' } } },
+    { url: '/api/webhook/mercadopago?topic=payment&id=556', body: {} }
+  ];
+  for (const { url, body } of cases) {
+    const res = await fetch(base + url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    assert.equal(res.status, 200, `expected 200 for ${url}`);
+  }
+  assert.deepEqual(fetchedIds, []);
+});
+
 // ── Paid amount ──
 
 test('an approved payment for less than the order total does not confirm the order', async () => {
